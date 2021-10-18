@@ -36,6 +36,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
         if (leaf == null)
             return false;
 
+        TTTreeNode<K, T> min = null;
+        TTTreeNode<K, T> max = null;
+        TTTreeNode<K, T> middle = null;
         while (true) {
             if (!leaf.isThreeNode()) {
                 if (leaf.getKeyL().compareTo(node.getKeyL()) < 0) {
@@ -52,17 +55,16 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
                 //leaf.setParent(leafParentMap.get("parent"));
                 return true;
             }
-            TTTreeNode<K, T> min;
-            TTTreeNode<K, T> max;
-            TTTreeNode<K, T> middle;
+            TTTreeNode<K, T> tempMin = min;
+            TTTreeNode<K, T> tempMax = max;
             if (node.getKeyL().compareTo(leaf.getKeyL()) < 0) {
                 min = new TTTreeNode<>(node.getKeyL(), node.getDataL());
                 max =  new TTTreeNode<>(leaf.getKeyR(), leaf.getDataR());
                 middle = new TTTreeNode<>(leaf.getKeyL(), leaf.getDataL());
-                min.setLeftSon(leaf.getLeftSon());
+                //min.setLeftSon(leaf.getLeftSon());
             } else if (node.getKeyL().compareTo(leaf.getKeyR()) > 0) {
-                leaf.setKeyR(node.getKeyL());
-                leaf.setDataR(node.getDataL());
+                //leaf.setKeyR(node.getKeyL());
+                //leaf.setDataR(node.getDataL());
                 min =  new TTTreeNode<>(leaf.getKeyL(), leaf.getDataL());
                 max = new TTTreeNode<>(node.getKeyL(), node.getDataL());
                 middle = new TTTreeNode<K, T>(leaf.getKeyR(), leaf.getDataR());
@@ -71,7 +73,36 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
                 max = new TTTreeNode<>(leaf.getKeyR(), leaf.getDataR());
                 middle = new TTTreeNode<>(node.getKeyL(), node.getDataL());
             }
-
+            if (tempMin != null && tempMax != null) {
+                if (tempMin.getKeyL().compareTo(leaf.getKeyL()) < 0) {
+                    min.setLeftSon(tempMin);
+                    min.setRightSon(tempMax);
+                    max.setLeftSon(leaf.getMiddleSon());
+                    max.setRightSon(leaf.getRightSon());
+                    tempMin.setParent(min);
+                    tempMax.setParent(min);
+                    leaf.getMiddleSon().setParent(max);
+                    leaf.getRightSon().setParent(max);
+                } else if (tempMin.getKeyL().compareTo(leaf.getKeyR()) > 0) {
+                    min.setLeftSon(leaf.getLeftSon());
+                    min.setRightSon(leaf.getMiddleSon());
+                    max.setLeftSon(tempMin);
+                    max.setRightSon(tempMax);
+                    tempMin.setParent(max);
+                    tempMax.setParent(max);
+                    leaf.getLeftSon().setParent(min);
+                    leaf.getMiddleSon().setParent(min);
+                } else {
+                    min.setLeftSon(leaf.getLeftSon());
+                    min.setRightSon(tempMin);
+                    max.setLeftSon(tempMax);
+                    max.setRightSon(leaf.getRightSon());
+                    tempMin.setParent(min);
+                    tempMax.setParent(max);
+                    leaf.getLeftSon().setParent(min);
+                    leaf.getRightSon().setParent(max);
+                }
+            }
             if (leaf.hasParent()) {
                 TTTreeNode<K, T> leafParent = leaf.getParent();
                 if (!leafParent.isThreeNode()) {
@@ -98,18 +129,18 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
                 } else {
                     min.setParent(leafParent);
                     max.setParent(leafParent);
-                    leafParent.setLeftSon(min);
-                    leafParent.setRightSon(max);
+                    //leafParent.setLeftSon(min);
+                    //leafParent.setRightSon(max);
                     leaf = leafParent;
                     node = middle;
                 }
             } else {
-                TTTreeNode<K, T> newRoot = new TTTreeNode<>(middle.getKeyL(), middle.getDataL());
-                newRoot.setLeftSon(new TTTreeNode<>(root.getKeyL(), root.getDataL()));
-                newRoot.setRightSon(new TTTreeNode<>(root.getKeyR(), root.getDataR()));
-                newRoot.getLeftSon().setParent(newRoot);
-                newRoot.getRightSon().setParent(newRoot);
-                this.root = newRoot;
+                //TTTreeNode<K, T> newRoot = middle;
+                middle.setLeftSon(min);
+                middle.setRightSon(max);
+                min.setParent(middle);
+                max.setParent(middle);
+                this.root = middle;
                 ++height;
                 return true;
             }
@@ -268,29 +299,30 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
 //    }
 
     public T remove(K key) {
-        TTTreeNode<K, T> node = search(key);
-        if (node == null) {
-            return null;
-        }
-        if (!extractNode(node)) {
-            return null;
-        }
-        return node.getData();
+//        TTTreeNode<K, T> node = search(key);
+//        if (node == null) {
+//            return null;
+//        }
+//        if (!extractNode(node)) {
+//            return null;
+//        }
+//        return node.getData();
+        return null;
     }
 
     private boolean extractNode(TTTreeNode<K, T> node) {
-        TTTreeNode<K, T> parent = node.getParent();
-        if (parent == null) {
-            this.root = null;
-            --size;
-            return true;
-        }
-        if (parent.getKey().compareTo(node.getKey()) < 0) {
-            parent.setRightSon(node);
-        } else {
-            parent.setLeftSon(node);
-            --size;
-        }
+//        TTTreeNode<K, T> parent = node.getParent();
+//        if (parent == null) {
+//            this.root = null;
+//            --size;
+//            return true;
+//        }
+//        if (parent.getKey().compareTo(node.getKey()) < 0) {
+//            parent.setRightSon(node);
+//        } else {
+//            parent.setLeftSon(node);
+//            --size;
+//        }
         return true;
     }
 

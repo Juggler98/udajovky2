@@ -22,6 +22,30 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
         return hasKeyR();
     }
 
+    public void vypis() {
+        if (hasMiddleSon()) {
+            System.out.println("hasMIDDLESon");
+        }
+        if (hasRightSon()) {
+            System.out.println("hasRIGHTSon");
+        }
+        if (hasLeftSon()) {
+            System.out.println("hasLEFTSon");
+        }
+        if (isThreeNode()) {
+            System.out.println("3 NODE");
+        } else {
+            System.out.println("2 NODE");
+        }
+        System.out.println();
+        if ((hasKeyR() && dataR == null) || (!hasKeyR() && dataR != null)) {
+            System.out.println("-------------Error------keyR-or-dataR----------");
+        }
+        if (keyL == null || dataL == null) {
+            System.out.println("-------------Error-------keyL-or-dataL---------");
+        }
+    }
+
     public boolean hasKeyR() {
         return keyR != null;
     }
