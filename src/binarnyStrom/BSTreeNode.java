@@ -1,3 +1,5 @@
+package binarnyStrom;
+
 public class BSTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
 
     private BSTreeNode<K, T> parent;
