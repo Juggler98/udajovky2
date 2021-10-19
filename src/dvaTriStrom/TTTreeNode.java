@@ -34,8 +34,11 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
         }
         if (isThreeNode()) {
             System.out.println("3 NODE");
+            System.out.println("L: " + keyL);
+            System.out.println("R: " + keyR);
         } else {
             System.out.println("2 NODE");
+            System.out.println("L: " + keyL);
         }
         System.out.println();
         if ((hasKeyR() && dataR == null) || (!hasKeyR() && dataR != null)) {
