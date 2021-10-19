@@ -46,8 +46,16 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
         }
     }
 
+    public boolean isLeaf() {
+        return !hasMiddleSon() && !hasRightSon() && !hasLeftSon();
+    }
+
     public boolean hasKeyR() {
         return keyR != null;
+    }
+
+    public boolean hasKeyL() {
+        return keyL != null;
     }
 
     public void setMiddleSon(TTTreeNode<K, T> middleSon) {

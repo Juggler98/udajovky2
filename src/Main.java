@@ -42,26 +42,61 @@ public class Main {
 
         Random random = new Random();
         random.setSeed(50);
-        TestClass[] tests = new TestClass[500];
+        TestClass[] tests = new TestClass[5];
         TTTree<Integer, TestClass> testTree = new TTTree<>();
+
+        tests[0] = new TestClass(10);
+        tests[1] = new TestClass(20);
+        tests[2] = new TestClass(8);
+        tests[3] = new TestClass(15);
+        tests[4] = new TestClass(25);
         for (int i = 0; i < tests.length; i++) {
             TestClass pom = new TestClass(random.nextInt(1000));
-            testTree.add(pom.getKluc(), pom);
-            //System.out.println(pom.getKluc());
+           // testTree.add(pom.getKluc(), pom);
+            testTree.add(tests[i].getKluc(), tests[i]);
+            System.out.println(tests[i].getKluc());
         }
         System.out.println();
-//        System.out.println(testTree.getRoot().getDataL().getKluc());
+
+        testTree.remove(20);
+
+
+
+
+
+        //System.out.println(testTree.inOrder(testTree.getRoot()).getDataL().getKluc());
+
+//        int operationCount = 5000;
+//        OperationGenerator operationGenerator = new OperationGenerator(5000);
+//        int addCount = 0;
+//        for (int i = 0; i < operationCount; i++) {
+//            if (operationGenerator.getOperation() == Operation.ADD) {
+//                addCount++;
+//            }
+//        }
+//        System.out.println("addCount: " + addCount);
+
+
+
+
+        //TestClass pom = new TestClass(9999);
+        //testTree.add(pom.getKluc(), pom);
+        //System.out.println(testTree.search(9999).getDataL().getKluc());
+        System.out.println();
+        System.out.println(testTree.getRoot().getDataL().getKluc());
 //        //System.out.println(testTree.getRoot().getDataR().getKluc());
-//        testTree.getRoot().vypis();
+        testTree.getRoot().vypis();
 //
-//        System.out.println(testTree.getRoot().getLeftSon().getDataL().getKluc());
-//        testTree.getRoot().getLeftSon().vypis();
+        System.out.println(testTree.getRoot().getLeftSon().getDataL().getKluc());
+        testTree.getRoot().getLeftSon().vypis();
 //
 ////        System.out.println(testTree.getRoot().getMiddleSon().getDataL().getKluc());
 ////        testTree.getRoot().getMiddleSon().vypis();
 //
-//        System.out.println(testTree.getRoot().getRightSon().getDataL().getKluc());
-//        testTree.getRoot().getRightSon().vypis();
+        System.out.println("Problem part: ");
+        System.out.println(testTree.getRoot().getRightSon().getDataL().getKluc());
+        System.out.println(testTree.getRoot().getRightSon().getDataR().getKluc());
+        testTree.getRoot().getRightSon().vypis();
 //
 ////        System.out.println(testTree.getRoot().getRightSon().getDataR().getKluc());
 ////        testTree.getRoot().getRightSon().vypis();
@@ -95,8 +130,8 @@ public class Main {
 //        System.out.println(testTree.getRoot().getRightSon().getLeftSon().getDataL().getKluc());
 //        System.out.println(testTree.getRoot().getRightSon().getRightSon().getDataL().getKluc());
 
-        System.out.println(testTree.getSize());
-        System.out.println(testTree.getHeight());
+        System.out.println("Tree size: " + testTree.getSize());
+        System.out.println("Tree height: " + testTree.getHeight());
 
 //        System.out.println(testTree.getRoot().getDataR().getKluc() + " root R");
 //        System.out.println(testTree.getRoot().getLeftSon().getDataL().getKluc() + " root leftSoon L");
