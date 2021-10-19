@@ -458,7 +458,23 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
             if (inOrderLeafSonType == SonType.LEFT) {
                 System.out.println("inOrderLeafSonType == SonType.LEFT");
                 if (parent.getRightSon().isThreeNode()) {
-
+                    inOrderLeaf.setKeyL(parent.getKeyL());
+                    inOrderLeaf.setDataL(parent.getDataL());
+                    parent.setKeyL(parent.getMiddleSon().getKeyL());
+                    parent.setDataL(parent.getMiddleSon().getDataL());
+                    parent.getMiddleSon().setKeyL(parent.getMiddleSon().getKeyR());
+                    parent.getMiddleSon().setDataL(parent.getMiddleSon().getDataR());
+                    parent.getMiddleSon().setKeyR(null);
+                    parent.getMiddleSon().setDataR(null);
+                    if (!inOrderLeaf.isLeaf() && !parent.getMiddleSon().isLeaf()) {
+                        if (!inOrderLeaf.getLeftSon().hasKeyL()) {
+                            inOrderLeaf.setLeftSon(inOrderLeaf.getRightSon());
+                        }
+                        inOrderLeaf.setRightSon(parent.getMiddleSon().getLeftSon());
+                        parent.getMiddleSon().setLeftSon(parent.getMiddleSon().getMiddleSon());
+                        parent.getMiddleSon().setMiddleSon(null);
+                    }
+                    return true;
                 } else {
                     if (parent.isThreeNode()) {
                         K tempLeftKey = parent.getMiddleSon().getKeyL();
@@ -500,7 +516,21 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
                 }
             } else if (inOrderLeafSonType == SonType.RIGHT) {
                 if (parent.getLeftSon().isThreeNode()) {
-
+                    inOrderLeaf.setKeyL(parent.getKeyR());
+                    inOrderLeaf.setDataL(parent.getDataR());
+                    parent.setKeyR(parent.getMiddleSon().getKeyR());
+                    parent.setDataR(parent.getMiddleSon().getDataR());
+                    parent.getMiddleSon().setKeyR(null);
+                    parent.getMiddleSon().setDataR(null);
+                    if (!inOrderLeaf.isLeaf() && !parent.getMiddleSon().isLeaf()) {
+                        if (!inOrderLeaf.getRightSon().hasKeyL()) {
+                            inOrderLeaf.setRightSon(inOrderLeaf.getLeftSon());
+                        }
+                        inOrderLeaf.setLeftSon(parent.getMiddleSon().getRightSon());
+                        parent.getMiddleSon().setRightSon(parent.getMiddleSon().getMiddleSon());
+                        parent.getMiddleSon().setMiddleSon(null);
+                    }
+                    return true;
                 } else {
                     if (parent.isThreeNode()) {
                         //System.out.println("here");
@@ -537,7 +567,41 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
                 }
             } else {
                 if (parent.getLeftSon().isThreeNode() || parent.getRightSon().isThreeNode()) {
-
+                    if (parent.getLeftSon().isThreeNode()) {
+                        inOrderLeaf.setKeyL(parent.getKeyL());
+                        inOrderLeaf.setDataL(parent.getDataL());
+                        parent.setKeyL(parent.getLeftSon().getKeyR());
+                        parent.setDataL(parent.getLeftSon().getDataR());
+                        parent.getMiddleSon().setKeyR(null);
+                        parent.getMiddleSon().setDataR(null);
+                        if (!inOrderLeaf.isLeaf() && !parent.getLeftSon().isLeaf()) {
+                            if (!inOrderLeaf.getRightSon().hasKeyL()) {
+                                inOrderLeaf.setRightSon(inOrderLeaf.getLeftSon());
+                            }
+                            inOrderLeaf.setLeftSon(parent.getLeftSon().getRightSon());
+                            parent.getLeftSon().setRightSon(parent.getLeftSon().getMiddleSon());
+                            parent.getLeftSon().setMiddleSon(null);
+                        }
+                        return true;
+                    } else if (parent.getRightSon().isThreeNode()) {
+                        inOrderLeaf.setKeyL(parent.getKeyR());
+                        inOrderLeaf.setDataL(parent.getDataR());
+                        parent.setKeyR(parent.getRightSon().getKeyL());
+                        parent.setDataR(parent.getRightSon().getDataL());
+                        parent.getRightSon().setKeyL(parent.getRightSon().getKeyR());
+                        parent.getRightSon().setDataL(parent.getRightSon().getDataR());
+                        parent.getRightSon().setKeyR(null);
+                        parent.getRightSon().setDataR(null);
+                        if (!inOrderLeaf.isLeaf() && !parent.getRightSon().isLeaf()) {
+                            if (!inOrderLeaf.getLeftSon().hasKeyL()) {
+                                inOrderLeaf.setLeftSon(inOrderLeaf.getRightSon());
+                            }
+                            inOrderLeaf.setRightSon(parent.getRightSon().getLeftSon());
+                            parent.getRightSon().setLeftSon(parent.getRightSon().getMiddleSon());
+                            parent.getRightSon().setMiddleSon(null);
+                        }
+                        return true;
+                    }
                 } else {
                     if (!parent.isThreeNode()) {
                         System.out.println("Error: !parent.isThreeNode()");
@@ -546,6 +610,19 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T>> {
                     parent.getLeftSon().setDataR(parent.getDataL());
                     parent.setKeyL(parent.getKeyR());
                     parent.setDataL(parent.getDataR());
+
+                    parent.getLeftSon().setMiddleSon(parent.getLeftSon().getRightSon());
+
+                    if (!parent.getMiddleSon().isLeaf()) {
+                        if (parent.getMiddleSon().getRightSon().hasKeyL()) {
+                            parent.getLeftSon().setRightSon(parent.getMiddleSon().getRightSon());
+                        } else {
+                            parent.getLeftSon().setRightSon(parent.getMiddleSon().getLeftSon());
+                        }
+                    }
+
+                    parent.setMiddleSon(null);
+
                     parent.setKeyR(null);
                     parent.setDataR(null);
                 }
