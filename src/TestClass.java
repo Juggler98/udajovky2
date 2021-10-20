@@ -1,4 +1,6 @@
-public class TestClass implements Comparable<TestClass> {
+import dvaTriStrom.TTTreeKey;
+
+public class TestClass implements Comparable<TestClass>, TTTreeKey<Integer> {
 
     private int kluc;
 
@@ -9,6 +11,11 @@ public class TestClass implements Comparable<TestClass> {
     @Override
     public int compareTo(TestClass o) {
         return Integer.compare(this.kluc, o.kluc);
+    }
+
+    @Override
+    public Integer getKey() {
+        return (Integer) this.kluc;
     }
 
     public int getKluc() {

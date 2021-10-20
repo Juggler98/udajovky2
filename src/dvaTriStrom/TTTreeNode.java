@@ -1,25 +1,22 @@
 package dvaTriStrom;
 
 
-public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
+public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey<K>> {
 
     private TTTreeNode<K, T> parent;
     private TTTreeNode<K, T> leftSon;
     private TTTreeNode<K, T> middleSon;
     private TTTreeNode<K, T> rightSon;
-    private K keyL;
-    private K keyR;
 
     private T dataL;
     private T dataR;
 
-    TTTreeNode(K key, T data) {
+    TTTreeNode(T data) {
         this.dataL = data;
-        this.keyL = key;
     }
 
     public boolean isThreeNode() {
-        return hasKeyR();
+        return hasDataR();
     }
 
     public void vypis() {
@@ -34,17 +31,14 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
         }
         if (isThreeNode()) {
             System.out.println("3 NODE");
-            System.out.println("L: " + keyL);
-            System.out.println("R: " + keyR);
+            System.out.println("L: " + dataL.getKey());
+            System.out.println("R: " + dataR.getKey());
         } else {
             System.out.println("2 NODE");
-            System.out.println("L: " + keyL);
+            System.out.println("L: " + dataL.getKey());
         }
         System.out.println();
-        if ((hasKeyR() && dataR == null) || (!hasKeyR() && dataR != null)) {
-            System.out.println("-------------Error------keyR-or-dataR----------");
-        }
-        if (keyL == null || dataL == null) {
+        if (dataL.getKey() == null || dataL == null) {
             System.out.println("-------------Error-------keyL-or-dataL---------");
         }
     }
@@ -53,24 +47,8 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
         return !hasMiddleSon() && !hasRightSon() && !hasLeftSon();
     }
 
-    public boolean hasKeyR() {
-        return keyR != null;
-    }
-
-    public boolean hasKeyL() {
-        return keyL != null;
-    }
-
     public void setMiddleSon(TTTreeNode<K, T> middleSon) {
         this.middleSon = middleSon;
-    }
-
-    public void setKeyL(K keyL) {
-        this.keyL = keyL;
-    }
-
-    public void setKeyR(K keyR) {
-        this.keyR = keyR;
     }
 
     public void setDataL(T dataL) {
@@ -83,14 +61,6 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
 
     public TTTreeNode<K, T> getMiddleSon() {
         return middleSon;
-    }
-
-    public K getKeyL() {
-        return keyL;
-    }
-
-    public K getKeyR() {
-        return keyR;
     }
 
     public T getDataL() {
@@ -113,7 +83,6 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
         this.rightSon = rightSon;
     }
 
-
     public TTTreeNode<K, T> getParent() {
         return parent;
     }
@@ -125,7 +94,6 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
     public TTTreeNode<K, T> getRightSon() {
         return rightSon;
     }
-
 
     public boolean hasLeftSon() {
         return this.leftSon != null;
@@ -139,6 +107,14 @@ public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
 
     public boolean hasMiddleSon() {
         return this.middleSon != null;
+    }
+
+    public boolean hasDataL() {
+        return this.dataL != null;
+    }
+
+    public boolean hasDataR() {
+        return this.dataR != null;
     }
 
 }
