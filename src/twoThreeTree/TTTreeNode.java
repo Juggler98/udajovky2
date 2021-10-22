@@ -1,7 +1,10 @@
-package dvaTriStrom;
+package twoThreeTree;
 
 
-public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey<K>> {
+import universalTree.TreeKey;
+import universalTree.TreeNode;
+
+public class TTTreeNode<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K>> implements TreeNode {
 
     private TTTreeNode<K, T> parent;
     private TTTreeNode<K, T> leftSon;

@@ -1,6 +1,8 @@
-import dvaTriStrom.TTTreeKey;
+package tests;
 
-public class TestClass implements Comparable<TestClass>, TTTreeKey<Integer> {
+import universalTree.TreeKey;
+
+public class TestClass implements Comparable<TestClass>, TreeKey<Integer> {
 
     private int kluc;
 

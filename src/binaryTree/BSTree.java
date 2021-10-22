@@ -1,22 +1,24 @@
-package binarnyStrom;
+package binaryTree;
+
+import universalTree.Tree;
+import universalTree.TreeKey;
 
 import java.util.ArrayList;
 
-public class BSTree<K extends Comparable<K>, T extends Comparable<T>> {
-
-    private BSTreeNode<K, T> root;
-    private int size = 0;
+public class BSTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K>> extends Tree<K, T> {
 
     public BSTree() {
 
     }
 
-
-    public void add(K key, T data) {
-        BSTreeNode<K, T> newItem = new BSTreeNode<>(key, data);
+    @Override
+    public boolean add(T data) {
+        BSTreeNode<K, T> newItem = new BSTreeNode<>(data);
         if (!tryToAdd(newItem)) {
             System.out.println("ERROR: Prvok sa nepodarilo vlozit");
+            return false;
         }
+        return true;
     }
 
     private boolean tryToAdd(BSTreeNode<K, T> node) {
@@ -44,7 +46,7 @@ public class BSTree<K extends Comparable<K>, T extends Comparable<T>> {
     }
 
     private BSTreeNode<K, T> findParent(K key) {
-        BSTreeNode<K, T> result = this.root;
+        BSTreeNode<K, T> result = (BSTreeNode<K, T>) this.root;
         while (key != result.getKey()) {
             if (key.compareTo(result.getKey()) < 0) {
                 if (result.hasLeftSon())
@@ -62,7 +64,7 @@ public class BSTree<K extends Comparable<K>, T extends Comparable<T>> {
     }
 
     public BSTreeNode<K, T> search(K key) {
-        BSTreeNode<K, T> result = this.root;
+        BSTreeNode<K, T> result = (BSTreeNode<K, T>) this.root;
         if (result == null) {
             return null;
         }
@@ -82,15 +84,15 @@ public class BSTree<K extends Comparable<K>, T extends Comparable<T>> {
         return key == result.getKey() ? result : null;
     }
 
-    public BSTreeNode<K, T> getRoot() {
-        return root;
-    }
+//    public BSTreeNode<K, T> getRoot() {
+//        return root;
+//    }
 
-    public int getSize() {
-        return size;
-    }
+//    public int getSize() {
+//        return size;
+//    }
 
-    //    public TreeNode search(TreeNode node) {
+    //    public dvaTriStrom.TreeNode search(dvaTriStrom.TreeNode node) {
 //        return null;
 //    }
 

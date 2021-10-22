@@ -1,25 +1,27 @@
-package dvaTriStrom;
+package twoThreeTree;
+
+import universalTree.Tree;
+import universalTree.TreeKey;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey<K>> {
+public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K>> extends Tree<K, T> {
 
-    private TTTreeNode<K, T> root;
-    private int size = 0;
+    //private TTTreeNode<K, T> root;
+    //private int size = 0;
     private int height = 0;
 
     public TTTree() {
-
     }
 
+    @Override
     public boolean add(T newData) {
         //TTTreeNode<K, T> newItem = new TTTreeNode<>(data);
         if (!tryToAdd(newData)) {
             System.out.println("Nepodarilo sa vlozit kluc: " + newData.getKey());
             return false;
         }
-        ++size;
+        ++this.size;
         return true;
         //++height;
 
@@ -180,7 +182,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
     }
 
     private TTTreeNode<K, T> findLeaf(T data) {
-        TTTreeNode<K, T> leaf = this.root;
+        TTTreeNode<K, T> leaf = (TTTreeNode<K, T>) this.root;
         while (true) {
             if (leaf.isThreeNode()) {
                 if (data.compareTo(leaf.getDataL()) < 0) {
@@ -284,8 +286,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
 //        return (key.compareTo(result.getKeyL()) == 0 || result.getKeyR().compareTo(key) == 0) && parent != result ? parent : null;
 //    }
 
+    @Override
     public TTTreeNode<K, T> search(K key) {
-        TTTreeNode<K, T> result = this.root;
+        TTTreeNode<K, T> result = (TTTreeNode<K, T>) this.root;
         if (result == null) {
             return null;
         }
@@ -336,15 +339,15 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
         return key.compareTo(result.getDataL().getKey()) == 0 ? result : null;
     }
 
-    public TTTreeNode<K, T> getRoot() {
-        return root;
-    }
+    //public TTTreeNode<K, T> getRoot() {
+    //return root;
+    //}
 
-    public int getSize() {
-        return size;
-    }
+    //public int getSize() {
+    //return size;
+    //}
 
-    //    public TreeNode search(TreeNode node) {
+    //    public dvaTriStrom.TreeNode search(dvaTriStrom.TreeNode node) {
 //        return null;
 //    }
 
@@ -367,6 +370,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
         return node;
     }
 
+    @Override
     public T remove(K key) {
         TTTreeNode<K, T> node = search(key);
         if (node == null) {
@@ -428,7 +432,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
         }
 
         //if (inOrderLeaf.hasDataL())
-            //inOrderLeaf.vypis();
+        //inOrderLeaf.vypis();
 
         //System.out.println("inOrderLeaf Parent leftSon keyL" + inOrderLeaf.getParent().getLeftSon().getDataL().getKey());
         //System.out.println("inOrderLeaf Parent key" + inOrderLeaf.getParent().getDataL().getKey());
@@ -485,7 +489,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
                     root = null;
                 }
                 if (root != null) {
-                    root.setParent(null);
+                    ((TTTreeNode<?, ?>) root).setParent(null);
                 }
 //                if (inOrderLeaf.hasMiddleSon() && inOrderLeaf.getMiddleSon().hasKeyL()) {
 //                    root = inOrderLeaf.getMiddleSon();
@@ -509,11 +513,11 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
                 return true;
             }
 
-            SonType inOrderLeafSonType = getSonType(inOrderLeaf);
+            TTTreeSonType inOrderLeafSonType = getSonType(inOrderLeaf);
             TTTreeNode<K, T> parent = inOrderLeaf.getParent();
             //System.out.println(parent.getLeftSon().getKeyL());
             //System.out.println(inOrderLeafSonType);
-            if (inOrderLeafSonType == SonType.LEFT) {
+            if (inOrderLeafSonType == TTTreeSonType.LEFT) {
                 //System.out.println("SonType.LEFT");
                 if ((parent.isThreeNode() && parent.getMiddleSon().isThreeNode()) || (!parent.isThreeNode() && parent.getRightSon().isThreeNode())) {
                     if (parent.isThreeNode()) {
@@ -590,7 +594,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
                     }
                     //parent.setLeftSon(null);
                 }
-            } else if (inOrderLeafSonType == SonType.RIGHT) {
+            } else if (inOrderLeafSonType == TTTreeSonType.RIGHT) {
                 //System.out.println("SonType.RIGHT");
                 if ((parent.isThreeNode() && parent.getMiddleSon().isThreeNode()) || (!parent.isThreeNode() && parent.getLeftSon().isThreeNode())) {
                     //System.out.println("brother is ThreeNode");
@@ -654,8 +658,8 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
                         parent.setDataL(null);
 
                         parent.getLeftSon().setMiddleSon(parent.getLeftSon().getRightSon());
-                       // System.out.println(inOrderLeaf.hasRightSon());
-                       // System.out.println(inOrderLeaf.hasLeftSon());
+                        // System.out.println(inOrderLeaf.hasRightSon());
+                        // System.out.println(inOrderLeaf.hasLeftSon());
                         if (inOrderLeaf.hasLeftSon() && inOrderLeaf.getLeftSon().hasDataL()) {
                             //System.out.println("test");
                             parent.getLeftSon().setRightSon(inOrderLeaf.getLeftSon());
@@ -731,18 +735,18 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TTTreeKey
         //return false;
     }
 
-    private SonType getSonType(TTTreeNode<K, T> node) {
+    private TTTreeSonType getSonType(TTTreeNode<K, T> node) {
         if (node != null) {
             TTTreeNode<K, T> parent = node.getParent();
             if (parent != null) {
                 if (parent.getRightSon() == node) {
-                    return SonType.RIGHT;
+                    return TTTreeSonType.RIGHT;
                 }
                 if (parent.getMiddleSon() == node) {
-                    return SonType.MIDDLE;
+                    return TTTreeSonType.MIDDLE;
                 }
                 if (parent.getLeftSon() == node) {
-                    return SonType.LEFT;
+                    return TTTreeSonType.LEFT;
                 }
             }
         }

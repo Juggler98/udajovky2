@@ -1,6 +1,9 @@
-package binarnyStrom;
+package binaryTree;
 
-public class BSTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
+import universalTree.TreeKey;
+import universalTree.TreeNode;
+
+public class BSTreeNode<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K>> implements TreeNode {
 
     private BSTreeNode<K, T> parent;
     private BSTreeNode<K, T> leftSon;
@@ -9,9 +12,8 @@ public class BSTreeNode<K extends Comparable<K>, T extends Comparable<T>> {
     private T data;
     private K key;
 
-    BSTreeNode(K key, T data) {
+    BSTreeNode(T data) {
         this.data = data;
-        this.key = key;
     }
 
     public void setParent(BSTreeNode<K, T> parent) {
