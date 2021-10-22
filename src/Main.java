@@ -66,7 +66,7 @@ public class Main {
         Random random1 = new Random();
         for (int j = 0; j < testCount; j++) {
             System.out.println("--------------------------NEW-TEST----------------------------------------");
-            int operationCount = 1000;
+            int operationCount = 100000;
             int addCount = 0;
             int removeCount = 0;
             int addNotPossible = 0;
@@ -78,7 +78,7 @@ public class Main {
 
             TestClass[] tests = new TestClass[20];
 
-            for (int i = 0; i <tests.length; i++) {
+            for (int i = 0; i < tests.length; i++) {
                 tests[i] = new TestClass(i);
             }
 
@@ -94,10 +94,13 @@ public class Main {
 
             if (goRandom) {
                 for (int i = 0; i < operationCount; i++) {
-                    TestClass pom = new TestClass((Integer) random.nextInt(500));
+                    if (i % 10000 == 0) {
+                        System.out.println(i + " operation");
+                    }
+                    TestClass pom = new TestClass((Integer) random.nextInt(1000000000));
                     int randomNumber = random1.nextInt(100) + 1;
-                    if (randomNumber <= 50) {
-                        System.out.println("ADD: " + pom.getKluc());
+                    if (randomNumber <= 70) {
+                        //System.out.println("ADD: " + pom.getKluc());
                         addCount++;
                         boolean treeNotAdd = testTree2.add(pom);
                         if (!treeNotAdd) {
@@ -111,15 +114,20 @@ public class Main {
                             System.out.println(pom.getKluc());
                             System.out.println("----------Problem------");
                         }
-                    } else if (randomNumber >= 50) {
-                        System.out.println("Remove: " + pom.getKluc());
-                        removeCount++;
-                        //int keyToDelete = testArrayList.get(random.nextInt(testArrayList.size()));
-                        if (testTree2.remove(pom.getKluc()) == null) {
-                            removeNotPossible++;
+                    } else {
+                        if (testTree2.getSize() > 0) {
+                            removeCount++;
+                            int keyToDelete = testArrayList.get(random.nextInt(testArrayList.size()));
+                            //System.out.println("Remove: " + keyToDelete);
+                            if (testTree2.remove(keyToDelete) == null) {
+                                removeNotPossible++;
+                            }
+                            if (testArrayList.contains(keyToDelete))
+                                testArrayList.remove((Integer) keyToDelete);
+                        } else {
+                            System.out.println("Empty tree");
                         }
-                        if (testArrayList.contains(pom.getKluc()))
-                            testArrayList.remove((Integer) pom.getKluc());
+
 //                boolean found = false;
 //                int index = 0;
 //                for (TestClass t : testArrayList) {
@@ -148,6 +156,8 @@ public class Main {
             System.out.println("-----------------------");
 
             testTree2.deepOfLeaf(testTree2.getRoot());
+
+            System.out.println();
 
 
 //            testTree2.add(tests[0]);
