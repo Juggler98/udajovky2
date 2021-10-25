@@ -6,7 +6,7 @@ public abstract class Tree<K extends Comparable<K>, T extends Comparable<T> & Tr
     protected int size = 0;
 
     public abstract boolean add(T data);
-    public abstract TreeNode search(K key);
+    public abstract T search(K key);
     public abstract T remove(K key);
 
     public TreeNode getRoot() {

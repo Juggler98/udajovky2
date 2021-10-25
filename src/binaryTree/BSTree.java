@@ -63,7 +63,29 @@ public class BSTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         return key != result.getKey() ? result : null;
     }
 
-    public BSTreeNode<K, T> search(K key) {
+    @Override
+    public T search(K key) {
+        BSTreeNode<K, T> result = (BSTreeNode<K, T>) this.root;
+        if (result == null) {
+            return null;
+        }
+        while (key != result.getKey()) {
+            if (key.compareTo(result.getKey()) != 0) {
+                if (result.hasLeftSon())
+                    result = result.getLeftSon();
+                else
+                    break;
+            } else {
+                if (result.hasRightSon())
+                    result = result.getRightSon();
+                else
+                    break;
+            }
+        }
+        return key == result.getKey() ? result.getData() : null;
+    }
+
+    public BSTreeNode<K, T> getNodeToRemove(K key) {
         BSTreeNode<K, T> result = (BSTreeNode<K, T>) this.root;
         if (result == null) {
             return null;
@@ -97,7 +119,7 @@ public class BSTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 //    }
 
     public T remove(K key) {
-        BSTreeNode<K, T> node = search(key);
+        BSTreeNode<K, T> node = getNodeToRemove(key);
         if (node == null) {
             return null;
         }

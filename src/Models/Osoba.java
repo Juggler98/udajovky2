@@ -1,14 +1,16 @@
 package Models;
 
+import universalTree.TreeKey;
+
 import java.util.Date;
 import java.lang.Comparable;
 
-public class Osoba implements Comparable<Osoba> {
+public class Osoba implements Comparable<Osoba>, TreeKey<String> {
 
-    private String meno;
-    private String priezvisko;
-    private Date datumNarodenia;
-    private String rodCislo;
+    private final String meno;
+    private final String priezvisko;
+    private final Date datumNarodenia;
+    private final String rodCislo;
 
     public Osoba(String meno, String priezvisko, Date datumNarodenia, String rodCislo) {
         this.meno = meno;
@@ -19,7 +21,12 @@ public class Osoba implements Comparable<Osoba> {
 
     @Override
     public int compareTo(Osoba o) {
-        return 0;
+        return rodCislo.compareTo(o.rodCislo);
+    }
+
+    @Override
+    public String getKey() {
+        return this.rodCislo;
     }
 
     public String getMeno() {

@@ -287,7 +287,20 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 //    }
 
     @Override
-    public TTTreeNode<K, T> search(K key) {
+    public T search(K key) {
+        TTTreeNode<K, T> result = searchNode(key);
+        if (result == null) {
+            return null;
+        }
+        if (key.compareTo(result.getDataL().getKey()) == 0) {
+            return result.getDataL();
+        } else if (result.isThreeNode() && key.compareTo(result.getDataR().getKey()) == 0) {
+            return result.getDataR();
+        }
+        return null;
+    }
+
+    private TTTreeNode<K, T> searchNode(K key) {
         TTTreeNode<K, T> result = (TTTreeNode<K, T>) this.root;
         if (result == null) {
             return null;
@@ -297,9 +310,6 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
                 break;
             }
             if (result.isThreeNode()) {
-                if (key.compareTo(result.getDataL().getKey()) == 0 || key.compareTo(result.getDataR().getKey()) == 0) {
-                    break;
-                }
                 if (key.compareTo(result.getDataL().getKey()) < 0) {
                     if (result.hasLeftSon())
                         result = result.getLeftSon();
@@ -330,9 +340,6 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
                 }
             }
         }
-        //System.out.println(result.getKeyL() + " -----------");
-        //System.out.println(key + " -----------");
-        //System.out.println(key == result.getKeyL());
         if (result.isThreeNode()) {
             return (key.compareTo(result.getDataL().getKey()) == 0 || key.compareTo(result.getDataR().getKey()) == 0) ? result : null;
         }
@@ -372,7 +379,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 
     @Override
     public T remove(K key) {
-        TTTreeNode<K, T> node = search(key);
+        TTTreeNode<K, T> node = searchNode(key);
         if (node == null) {
             System.out.println("Mazanie, prvok neexistuje: " + key);
             return null;
