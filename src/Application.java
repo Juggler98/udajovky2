@@ -1,18 +1,21 @@
-import Models.Okres;
-import Models.Osoba;
-import Models.PCRTest;
-import Models.UzemnaJednotka;
+import Models.*;
 import twoThreeTree.TTTree;
 import twoThreeTree.TTTreeNode;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 public class Application {
 
     private final TTTree<String, Osoba> personTree = new TTTree<>();
-    private final TTTree<String, PCRTest> pcrTree = new TTTree<>();
+    private final TTTree<String, PCRTestKod> pcrTreeCode = new TTTree<>();
+    private final TTTree<Date, PCRTestDate> pcrTreeDate = new TTTree<>();
+    private final TTTree<Date, PCRTestDate> pcrTreePositive = new TTTree<>();
     private final TTTree<Integer, UzemnaJednotka> okresTree = new TTTree<>();
+    private final TTTree<Integer, UzemnaJednotka> pracoviskoTree = new TTTree<>();
+    private final ArrayList<Osoba> randomOsoby = new ArrayList<>();
 
     private final String[] names = {"Alexander", "Jett", "Griffin", "Tyson", "Donavan", "Remington", "German", "Frederick", "Camden", "Peter", "Gunnar", "Joey", "Leroy", "Braylon", "Darius", "Simeon", "Parker", "Colten", "Finnegan", "Esteban", "Nathaniel", "Marshall", "Hamza", "Mohammed", "Alden", "Kadin", "Will", "Orlando", "Lyric", "Shawn", "Ronald", "Brycen", "Kaleb", "Jaylan", "Keenan", "Bryant", "Eden", "Zaire", "Jarrett", "Gunner", "Dante", "Adonis", "Rex", "Giancarlo", "Grayson", "Alex", "Alfredo", "Ariel", "Cade", "Frank", "Craig", "Avery", "Rolando", "Daniel", "Nigel", "Malcolm", "Carmelo", "John", "Octavio", "Adrian", "Kash", "Shamar", "Alessandro", "Oliver", "Deangelo", "Kade", "Todd", "Spencer", "Trevin", "Jessie", "Santiago", "Theodore", "Damien", "Cayden", "Kelton", "Chance", "Jacob", "Jayvon", "Cael", "Zackary", "Javon", "Chandler", "Bentley", "Bronson", "Mekhi", "Emilio", "Hassan", "Micah", "Ronin", "Dennis", "Coby", "Rigoberto", "Morgan", "Oswaldo", "Brogan", "Wyatt", "Seamus", "Darian", "Titus", "Heath", "Marlene", "Miriam", "Kaylah", "Mylie", "Jaelyn", "Angeline", "Georgia", "Mia", "Rachael", "Zoie", "Emely", "Keira", "Cynthia", "Alena", "Mercedes", "Amara", "Carla", "Daisy", "Angie", "Lexie", "Reese", "Christine", "June", "Lila", "Angelina", "Sylvia", "Jacey", "Adalynn", "Alaina", "Dominique", "Rory", "Payten", "Casey", "Kira", "Noemi", "Fatima", "Alexandria", "Renee", "Jazmine", "Olive", "Cailyn", "Myah", "Evie", "Andrea", "Elizabeth", "Mariana", "Erika", "Kiersten", "Trinity", "Carissa", "Abagail", "Nicole", "Marlie", "Jewel", "Jasmine", "Kaia", "Mikayla", "Elise", "Leila", "Alia", "Alisha", "Kyla", "Juliet", "Paityn", "Isla", "Mareli", "Cristina", "Belinda", "Heidi", "Chana", "Shaniya", "Tania", "Isabela", "Avery", "Siena", "Amiya", "Madalyn", "Ryleigh", "Tara", "Jaylene", "Emery", "Jenna", "Jazlyn", "Shannon", "Brielle", "Reagan", "Averi", "Caitlin", "Abbey", "Aisha", "Cecelia", "Jocelynn", "Jordin", "Janiah", "Karissa", "Chelsea", "Kylie", "Eliana", "Sarah", "Kendall"};
     private final String[] lastNames = {"Giles", "Todd", "Wilkerson", "Meyer", "Padilla", "Buchanan", "Dillon", "Joseph", "Mullen", "Moss", "Finley", "Compton", "Fritz", "Freeman", "Solis", "Browning", "Ball", "Adkins", "Nunez", "Travis", "Gilmore", "Santiago", "Mayo", "Carson", "Bauer", "Brandt", "Yu", "Fleming", "Paul", "English", "Douglas", "Pacheco", "Carlson", "Mcintyre", "Sampson", "Oliver", "Tapia", "Galloway", "Bautista", "Mccormick", "Singleton", "Newman", "Gordon", "Davila", "Ramsey", "Brooks", "Colon", "Donaldson", "Farmer", "Mcguire", "Garza", "Villarreal", "Alexander", "Kennedy", "Cross", "Hall", "Charles", "Mcconnell", "Bass", "Daniels", "Bishop", "Odonnell", "Salinas", "Wise", "Ayala", "Koch", "Kirk", "Schwartz", "Lindsey", "Leon", "Werner", "Bowers", "Carr", "Mooney", "Norton", "Beck", "Mcknight", "Phelps", "Valencia", "Richards", "Gallegos", "Potter", "Brewer", "Martin", "Garrison", "Meza", "Herring", "Harding", "Wong", "Mata", "Booth", "Mason", "Frazier", "Hughes", "Montgomery", "Robertson", "Zamora", "Ryan", "Shields", "Maynard"};
@@ -20,12 +23,34 @@ public class Application {
     private final Integer[] okresCodes = {101, 102, 103, 104, 105, 106, 107, 108, 201, 202, 203, 204, 205, 206, 207, 301, 302, 303, 304, 305, 306, 307, 308, 309, 401, 402, 403, 404, 405, 406, 407, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811};
     private final String[] krajNames = {"Bratislavský", "Trnavský", "Trenčiansky", "Nitriansky", "Žilinský", "Banskobystrický", "Prešovský", "Košický"};
     private final Integer[] krajCodes = {1, 2, 3, 4, 5, 6, 7, 8};
+    private final String[] pracoviskaNames = {"Nemocnica s poliklinikou Milosrdní bratia, spol. s r. o.", "UNB – Nemocnica Ružinov, Ružinov", "Univerzitná nemocnica Bratislava  - Nemocnica akad. L. Dérera", "Univerzitná nemocnica Bratislava - Nemocnica sv. Cyrila a Metoda", "Nemocnica Malacky", "Nemocnica s Poliklinikou Dunajská Streda", "Nemocnica s Poliklinikou Sv. Lukáša Galanta", "Nemocnica A. Wintera Piešťany", "Fakultná Nemocnica s Poliklinikou Skalica", "Fakultná Nemocnica Trnava", "Nemocnica Bánovce nad Bebravou", "Nemocnica s Poliklinikou Ilava", "Nemocnica s Poliklinikou Myjava", "Nemocnica s Poliklinikou Nové Mesto nad Váhom", "Nemocnica na okraji mesta Partizánske", "Nemocnica s Poliklinikou Považská Bystrica", "Nemocnica s Poliklinikou Prievidza, Bojnice", "Nemocnica Handlová", "Fakultná nemocnica Trenčín", "Nemocnica  Agel Komárno s.r.o.", "Nemocnica Levice", "Hospitale Šahy", "Fakultná Nemocnica Nitra", "Fakultná Nemocnica s Poliklinikou Nové Zámky", "Svet zdravia Nemocnica Topoľčany", "Nemocnica Zlaté Moravce", "Kysucká Nemocnica s Poliklinikou Čadca", "Dolnooravská Nemocnica s Poliklinikou MUDr. L.N.J", "Liptovská Nemocnica s Poliklinikou MUDr. I.Stodolu", "Univerzitná Nemocnica Martin", "Hornooravská Nemocnica s Poliklinikou Trstená", "Fakultná Nemocnica s Poliklinikou Žilina", "Oravská poliklinika Námestovo", "Fakultná nemocnica s poliklinikou  F. D. Roosevelta Banská Bystrica", "Nemocnica s Poliklinikou Brezno", "Nemocnica s Poliklinikou Krupina", "Všeobecná Nemocnica s Poliklinikou Lučenec", "Nemocnica s Poliklinikou Revúca", "Gemerclinic Hnúšťa", "Svet zdravia, a. s., Všeobecná nemocnica Rimavská Sobota", "Všeobecná Nemocnica s Poliklinikou Veľký Krtíš", "Nemocnica AGEL Zvolen a.s.", "Nemocnica s Poliklinikou Mediform Nová Baňa", "Svet zdravia, a.s.,  Všeobecná nemocnica Žiar nad Hronom", "PRO VITAE n. o., Gelnica , Nemocnica s poliklinikou", "Železničné zdravotníctvo Košice s.r.o.", "Nemocnica AGEL Košice-Šaca a.s.", "Univerzitná nemocnica L. Pasteura Košice", "Univerzitná nemocnica L. Pasteura Košice 2", "Nemocnica s Poliklinikou Štefana Kukuru Michalovce, a.s.", "Nemocnica s Poliklinikou sv. Barbory Rožňava", "Regionálna nemocnica Sobrance, n.o.", "Nemocnica Krompachy", "Nemocnica s Polklinikou Kráľovský Chlmec", "Nemocnica s Poliklinikou Trebišov", "Nemocnica s Poliklinikou Spišská Nová Ves, a.s.", "Nemocnica s Poliklinikou Sv. Jakuba Bardejov", "Nemocnica A. Leňa Humenné", "Nemocnica Kežmarok", "Nemocnica Levoča", "Nemocnica Poprad", "Fakultná Nemocnica s Poliklinikou Prešov", "Poliklinika Sabinov, n.o.", "Nemocnica Snina, s.r.o.", "Ľubovnianska nemocnica", "Nemocnica Stropkov", "Nemocnica gen. L. Svobodu Svidník", "Vranovská nemocnica, a.s."};
+    private final Integer[] pracoviskaCodes = {101, 102, 103, 104, 105, 201, 202, 203, 204, 205, 301, 302, 303, 304, 305, 306, 307, 308, 309, 401, 402, 403, 404, 405, 406, 407, 501, 502, 503, 504, 505, 506, 507, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812};
 
+    private final Kraj[] kraje = new Kraj[krajCodes.length];
+
+    Random random = new Random();
 
     public Application() {
+        if (okresCodes.length != okresNames.length) {
+            System.out.println("Error: okresCodes.length != okresNames.length");
+        }
+        if (krajCodes.length != krajNames.length) {
+            System.out.println("Error: krajCodes.length != krajNames.length");
+        }
+        if (pracoviskaNames.length != pracoviskaCodes.length) {
+            System.out.println("Error: pracoviskaNames.length != pracoviskaCodes.length");
+        }
         for (int i = 0; i < okresCodes.length; i++) {
             Okres okres = new Okres(okresCodes[i], okresCodes[i] / 100, okresNames[i]);
             okresTree.add(okres);
+        }
+        for (int i = 0; i < krajCodes.length; i++) {
+            Kraj kraj = new Kraj(krajCodes[i], krajNames[i]);
+            kraje[i] = kraj;
+        }
+        for (int i = 0; i < pracoviskaCodes.length; i++) {
+            Pracovisko pracovisko = new Pracovisko(pracoviskaCodes[i], pracoviskaCodes[i] / 100, pracoviskaNames[i]);
+            pracoviskoTree.add(pracovisko);
         }
     }
 
@@ -34,7 +59,7 @@ public class Application {
     }
 
     public void printPcrTree() {
-        pcrTree.preorder((TTTreeNode<String, PCRTest>) pcrTree.getRoot());
+        pcrTreeCode.preorder((TTTreeNode<String, PCRTestKod>) pcrTreeCode.getRoot());
     }
 
     public void printOkresTree() {
@@ -49,6 +74,10 @@ public class Application {
         return (Okres) okresTree.search(kodOkresu);
     }
 
+    public int getPersonCount() {
+        return personTree.getSize();
+    }
+
     public String getKrajName(int kodKraja) {
         if (kodKraja >= krajNames.length) {
             return "Neznamy kraj " + kodKraja;
@@ -57,98 +86,105 @@ public class Application {
     }
 
     public PCRTest getPCRTest(String kodTestu) {
-        return pcrTree.search(kodTestu);
+        return pcrTreeCode.search(kodTestu).getData();
     }
 
     public Osoba getOsoba(String rodCislo) {
         return personTree.search(rodCislo);
     }
 
-    public boolean addPCRTest(String rodCislo, int kodPracoviska, int kodOkresu, int kodKraju, boolean vysledok, String poznamka) {
-        //Date date = new Date(rok - 1900, mesiac - 1, den);
-        PCRTest pcrTest = new PCRTest(rodCislo, kodPracoviska, kodOkresu, kodKraju, vysledok, poznamka);
-        return pcrTree.add(pcrTest);
+    public Pracovisko getPracovisko(int kodPracoviska) {
+        return (Pracovisko) pracoviskoTree.search(kodPracoviska);
     }
 
-    public boolean addOsoba(String meno, String priezvisko, String rodCislo) {
+    public Kraj getKraj(int kodKraja) {
+        if (kodKraja > kraje.length) {
+            return null;
+        }
+        return kraje[kodKraja - 1];
+    }
+
+    public ArrayList<Osoba> getIntervalOsoba(String startRodCislo, String endRodCislo) {
+        personTree.clearData();
+        personTree.setInterval((TTTreeNode<String, Osoba>) personTree.getRoot(), startRodCislo, endRodCislo);
+        return personTree.getData();
+    }
+
+    public ArrayList<PCRTestDate> getDateIntervalTest(TTTree<Date, PCRTestDate> tree, Date startDate, Date endDate) {
+        tree.clearData();
+        tree.setInterval((TTTreeNode<Date, PCRTestDate>) tree.getRoot(), startDate, endDate);
+        return tree.getData();
+    }
+
+    public boolean addPCRTest(String kodTestu, String rodCislo, int kodPracoviska, int kodOkresu, int kodKraju, boolean vysledok, String poznamka, Osoba osoba) {
+        //Date date = new Date(rok - 1900, mesiac - 1, den);
+        //Osoba osoba = getOsoba(rodCislo);
+        if (kodTestu == null) {
+            kodTestu = UUID.randomUUID().toString();
+        }
+        PCRTest pcrTest = new PCRTest(kodTestu, rodCislo, kodPracoviska, kodOkresu, kodKraju, vysledok, poznamka, osoba);
+        PCRTestKod pcrTestCode = new PCRTestKod(pcrTest);
+        PCRTestDate pcrTestDate = new PCRTestDate(pcrTest);
+        osoba.getTesty().add(pcrTestDate);
+        boolean pracovisko = getPracovisko(kodPracoviska).getTesty().add(pcrTestDate);
+        boolean kraj = getKraj(kodKraju).getTesty().add(pcrTestDate);
+        boolean okres = getOkres(kodOkresu).getTesty().add(pcrTestDate);
+        boolean okresPozitivne = true;
+        boolean krajPozitivne = true;
+        boolean pracoviskoPozitivne = true;
+        boolean pozitivne = true;
+        if (vysledok) {
+            okresPozitivne = getOkres(kodOkresu).getPozitivneTesty().add(pcrTestDate);
+            krajPozitivne = getKraj(kodKraju).getPozitivneTesty().add(pcrTestDate);
+            pracoviskoPozitivne = getPracovisko(kodPracoviska).getPozitivneTesty().add(pcrTestDate);
+            pozitivne = pcrTreePositive.add(pcrTestDate);
+        }
+        return pcrTreeCode.add(pcrTestCode) && pcrTreeDate.add(pcrTestDate) && pracovisko && kraj && okres && pracoviskoPozitivne && krajPozitivne && okresPozitivne && pozitivne;
+    }
+
+    public Osoba addOsoba(String meno, String priezvisko, String rodCislo) {
         Date actualDate = new Date(System.currentTimeMillis());
         int year = Integer.parseInt(rodCislo.substring(0, 2));
-        int month = Integer.parseInt(rodCislo.substring(2,4));
-        int day = Integer.parseInt(rodCislo.substring(4,6));
+        int month = Integer.parseInt(rodCislo.substring(2, 4));
+        int day = Integer.parseInt(rodCislo.substring(4, 6));
         Date date = new Date(year < actualDate.getYear() - 100 ? year + 100 : year, month - 1, day);
         Osoba osoba = new Models.Osoba(meno, priezvisko, date, rodCislo);
-        return personTree.add(osoba);
+        if (personTree.add(osoba)) {
+            return osoba;
+        }
+        return null;
 
     }
 
-
     public void addRandomPCRTest(int count) {
-        Random random = new Random();
         for (int i = 0; i < count; i++) {
-            //Date actualDate = new Date(System.currentTimeMillis());
             String rodCislo = this.getRandomRodCislo();
-            int kodPracoviska = random.nextInt(100);
+            int kodPracoviska = pracoviskaCodes[random.nextInt(pracoviskaCodes.length)];
             int kodOkresu = okresCodes[random.nextInt(okresCodes.length)];
-            int kodKraju = krajCodes[random.nextInt(krajCodes.length)];
+            int kodKraju = kodOkresu / 100;
             boolean vysledok = random.nextInt(2) == 1;
-            String poznamka = null;
-            PCRTest pcrTest = new PCRTest(rodCislo, kodPracoviska, kodOkresu, kodKraju, vysledok, poznamka);
-            pcrTree.add(pcrTest);
+            Osoba osoba = getOsoba(rodCislo);
+            if (osoba == null) {
+                osoba = randomOsoby.get(random.nextInt(randomOsoby.size()));
+            }
+            String kodTestu = "" + random.nextInt(1000);
+            if (osoba != null)
+                this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba);
         }
     }
 
     public void addRandomPersons(int count) {
-        Random random = new Random();
-        random.setSeed(50);
-        Date actualDate = new Date(System.currentTimeMillis());
         for (int i = 0; i < count; i++) {
             String randomName = names[random.nextInt(this.names.length)];
             String randomLastName = lastNames[random.nextInt(this.lastNames.length)];
-
-            int randomCode;
-            int randomYear = random.nextInt(100);
-            String randomCodeStr;
-            if (randomYear < 54 && randomYear > actualDate.getYear() - 100) {
-                randomCode = random.nextInt(1000);
-                if (randomCode < 10) {
-                    randomCodeStr = "00" + randomCode;
-                } else if (randomCode < 100) {
-                    randomCodeStr = "0" + randomCode;
-                } else {
-                    randomCodeStr = "" + randomCode;
-                }
-            } else {
-                randomCode = random.nextInt(10000);
-                if (randomCode < 10) {
-                    randomCodeStr = "000" + randomCode;
-                } else if (randomCode < 100) {
-                    randomCodeStr = "00" + randomCode;
-                } else if (randomCode < 1000) {
-                    randomCodeStr = "0" + randomCode;
-                } else {
-                    randomCodeStr = "" + randomCode;
-                }
+            Osoba osoba = this.addOsoba(randomName, randomLastName, getRandomRodCislo());
+            if (osoba != null) {
+                randomOsoby.add(osoba);
             }
-            int randomMonth = random.nextInt(12) + 1;
-            int randomDay = random.nextInt(30) + 1;
-            if (randomMonth == 2 && randomDay > 28) {
-                randomDay = 28;
-            }
-            String randomRodCislo = "" + (randomYear < 10 ? ("0" + randomYear) : randomYear) + (randomMonth < 10 ? ("0" + randomMonth) : randomMonth) + (randomDay < 10 ? ("0" + randomDay) : randomDay) + randomCodeStr;
-//            System.out.println(randomRodCislo);
-
-            Date date = new Date(randomYear < actualDate.getYear() - 100 ? randomYear + 100 : randomYear, randomMonth - 1, randomDay);
-//            System.out.println(date.getYear() + 1900);
-//            System.out.println(date.getMonth());
-//            System.out.println(date.getDate());
-            Osoba osoba = new Models.Osoba(randomName, randomLastName, date, randomRodCislo);
-            personTree.add(osoba);
         }
     }
 
     private String getRandomRodCislo() {
-        Random random = new Random();
-        random.setSeed(50);
         Date actualDate = new Date(System.currentTimeMillis());
         int randomCode;
         int randomYear = random.nextInt(100);
@@ -180,7 +216,7 @@ public class Application {
             randomDay = 28;
         }
         String randomRodCislo = "" + (randomYear < 10 ? ("0" + randomYear) : randomYear) + (randomMonth < 10 ? ("0" + randomMonth) : randomMonth) + (randomDay < 10 ? ("0" + randomDay) : randomDay) + randomCodeStr;
-        System.out.println(randomRodCislo);
+        //System.out.println(randomRodCislo);
         return randomRodCislo;
     }
 

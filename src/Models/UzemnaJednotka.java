@@ -1,11 +1,17 @@
 package Models;
 
+import twoThreeTree.TTTree;
 import universalTree.TreeKey;
+
+import java.util.Date;
 
 public abstract class UzemnaJednotka implements Comparable<UzemnaJednotka>, TreeKey<Integer> {
 
-    protected Integer kod;
-    protected String nazov;
+    private final Integer kod;
+    private final String nazov;
+
+    private final TTTree<Date, PCRTestDate> testy = new TTTree<>();
+    private final TTTree<Date, PCRTestDate> pozitivneTesty = new TTTree<>();
 
     UzemnaJednotka(int kod, String nazov) {
         this.kod = kod;
@@ -20,6 +26,14 @@ public abstract class UzemnaJednotka implements Comparable<UzemnaJednotka>, Tree
     @Override
     public Integer getKey() {
         return kod;
+    }
+
+    public TTTree<Date, PCRTestDate> getTesty() {
+        return testy;
+    }
+
+    public TTTree<Date, PCRTestDate> getPozitivneTesty() {
+        return this.pozitivneTesty;
     }
 
     public int getKod() {

@@ -29,7 +29,7 @@ public class TestGenerator {
         Random random1 = new Random();
         for (int j = 0; j < testCount; j++) {
             System.out.println("--------------------------NEW-TEST-------------------------------------");
-            int operationCount = 100000;
+            int operationCount = 100;
             int addCount = 0;
             int removeCount = 0;
             int addNotPossible = 0;
@@ -50,7 +50,7 @@ public class TestGenerator {
 
             int addPercentage = 70;
             int removePercentage = 100 - addPercentage;
-            int randomNumberBound = 1000000000;
+            int randomNumberBound = 10;
             if (goRandom) {
                 for (int i = 0; i < operationCount; i++) {
                     if (i % 10000 == 0) {
@@ -118,6 +118,9 @@ public class TestGenerator {
 
             System.out.println("-----------PREORDER------------");
             testTree.preorder((TTTreeNode<Integer, TestClass>) testTree.getRoot());
+
+            System.out.println("-----------INORDER------------");
+            testTree.inOrder((TTTreeNode<Integer, TestClass>) testTree.getRoot());
 
             System.out.println("---------LEAF-DEEP----------");
             testTree.deepOfLeaf((TTTreeNode<Integer, TestClass>) testTree.getRoot());

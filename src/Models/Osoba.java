@@ -2,6 +2,7 @@ package Models;
 
 import universalTree.TreeKey;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.lang.Comparable;
 
@@ -11,12 +12,17 @@ public class Osoba implements Comparable<Osoba>, TreeKey<String> {
     private final String priezvisko;
     private final Date datumNarodenia;
     private final String rodCislo;
+    private final ArrayList<PCRTestDate> testy = new ArrayList<>();
 
     public Osoba(String meno, String priezvisko, Date datumNarodenia, String rodCislo) {
         this.meno = meno;
         this.priezvisko = priezvisko;
         this.datumNarodenia = datumNarodenia;
         this.rodCislo = rodCislo;
+    }
+
+    public ArrayList<PCRTestDate> getTesty() {
+        return testy;
     }
 
     @Override

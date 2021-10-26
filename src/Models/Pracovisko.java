@@ -4,11 +4,11 @@ import twoThreeTree.TTTree;
 
 import java.util.Date;
 
-public class Okres extends UzemnaJednotka {
+public class Pracovisko extends UzemnaJednotka {
 
     private final int kodKraja;
 
-    public Okres(Integer kod, int kodKraja, String nazov) {
+    public Pracovisko(int kod, int kodKraja, String nazov) {
         super(kod, nazov);
         this.kodKraja = kodKraja;
     }

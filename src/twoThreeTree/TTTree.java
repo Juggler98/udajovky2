@@ -10,8 +10,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
     //private TTTreeNode<K, T> root;
     //private int size = 0;
     private int height = 0;
+    private ArrayList<T> data = new ArrayList<>();
 
     public TTTree() {
+
     }
 
     @Override
@@ -143,11 +145,77 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         }
     }
 
-    public void preorder(TTTreeNode<K, T> node) {
+//    public void inOrder2(TTTreeNode<K, T> node) {
+//        ArrayList<TTTreeNode<K, T>> arrayList = new ArrayList<>();
+//        TTTreeNode<K, T> current, pre;
+//        if (node == null) {
+//            return;
+//        }
+//        current = (TTTreeNode<K, T>) this.root;
+//        while (current != null) {
+//            if (!current.hasLeftSon()) {
+//
+//                if (!current.hasMiddleSon()) {
+//                    current = current.getRightSon();
+//                } else {
+//
+//                }
+//            } else {
+//                pre = current.getLeftSon();
+//
+//            }
+//        }
+//    }
+
+    public ArrayList<T> getData() {
+        return data;
+    }
+
+    public void clearData() {
+        data.clear();
+    }
+
+    public void setInterval(TTTreeNode<K, T> node, K start, K end) {
         if (node == null) {
-            //System.out.println("null");
             return;
         }
+        if (start.compareTo(node.getDataL().getKey()) < 0 || end.compareTo(node.getDataL().getKey()) < 0) {
+            setInterval(node.getLeftSon(), start, end);
+        }
+        if (node.getDataL().getKey().compareTo(start) >= 0 && node.getDataL().getKey().compareTo(end) <= 0) {
+            data.add(node.getDataL());
+        }
+        if (node.isThreeNode()) {
+            if (node.getDataR().getKey().compareTo(start) >= 0 && node.getDataR().getKey().compareTo(end) <= 0) {
+                data.add(node.getDataR());
+            }
+        }
+        if (node.isThreeNode()) {
+            if (start.compareTo(node.getDataL().getKey()) > 0 || end.compareTo(node.getDataR().getKey()) > 0) {
+                setInterval(node.getMiddleSon(), start, end);
+            }
+            if (start.compareTo(node.getDataR().getKey()) > 0 || end.compareTo(node.getDataR().getKey()) > 0) {
+                setInterval(node.getRightSon(), start, end);
+            }
+        } else {
+            if (start.compareTo(node.getDataL().getKey()) > 0 || end.compareTo(node.getDataL().getKey()) > 0) {
+                setInterval(node.getRightSon(), start, end);
+            }
+        }
+    }
+
+    public void inOrder(TTTreeNode<K, T> node) {
+        if (node == null)
+            return;
+        inOrder(node.getLeftSon());
+        node.vypis();
+        inOrder(node.getMiddleSon());
+        inOrder(node.getRightSon());
+    }
+
+    public void preorder(TTTreeNode<K, T> node) {
+        if (node == null)
+            return;
         node.vypis();
         preorder(node.getLeftSon());
         preorder(node.getMiddleSon());
@@ -358,24 +426,6 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 //        return null;
 //    }
 
-    public TTTreeNode<K, T> inOrder(TTTreeNode<K, T> node) {
-        ArrayList<TTTreeNode<K, T>> a = new ArrayList<>();
-        if (root == null)
-            return null;
-        if (node.isLeaf()) {
-            return node;
-        }
-        if (node.hasLeftSon()) {
-            inOrder(node.getLeftSon());
-        }
-        if (node.hasRightSon()) {
-            inOrder(node.getRightSon());
-        }
-        if (node.hasMiddleSon()) {
-            inOrder(node.getMiddleSon());
-        }
-        return node;
-    }
 
     @Override
     public T remove(K key) {
