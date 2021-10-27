@@ -1,4 +1,5 @@
 import Models.*;
+import twoThreeTree.TTTree;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,9 +19,16 @@ public class GraphicalApp {
     private final int posun = 10;
 
     private boolean novyTest = false;
-    private boolean hladajPreOkresy = false;
+    private boolean hladajPozitivneOsoby = false;
     private boolean hladajTestyPrePracovisko = false;
     private boolean novaOsoba = false;
+
+    private final String[] typy = {"Všetky uzemne jednotky", "Okres", "Kraj", "Pracovisko"};
+    private final String[] pozitivne = {"Všetky vysledky testov", "Pozitivne"};
+    private final String[] okresyKraje = {"Okresy", "Kraje"};
+    private TypUzJednotky typUzJednotky;
+    private TypVysledokTestu typVysledokTestu;
+
 
     public GraphicalApp() {
         jFrame.setVisible(true);
@@ -39,9 +47,10 @@ public class GraphicalApp {
         addVytvorPCRTestComponents();
         addVyhladajPCRTest();
         addVypisTestovPacienta();
-        addVypisPozitivnychTestovPreOkres();
-        addAllTestyPracovisko();
         addPridajOsoba();
+        addVyhladajTesty();
+        addVyhladajPozitivneOsoby();
+        addZoradOkresyKraje();
 
         test();
 
@@ -69,22 +78,560 @@ public class GraphicalApp {
                 buttons[i] = new JButton("");
                 jPanel.add(buttons[i]);
                 if (i > 5) {
-                    buttons[i].setBounds(posun + componentWidth * (i - 6), posun + 370, componentWidth, componentHeight);
+                    // buttons[i].setBounds(posun + componentWidth * (i - 6), posun + 370, componentWidth, componentHeight);
                 } else {
-                    buttons[i].setBounds(posun + componentWidth * (3 + i), posun, componentWidth, componentHeight);
+                    //buttons[i].setBounds(posun + componentWidth * (3 + i), posun, componentWidth, componentHeight);
                 }
             }
         }
+    }
+
+    private enum TypUzJednotky {
+        VSETKY,
+        PRACOVISKO,
+        OKRES,
+        KRAJ,
+    }
+
+    private enum TypVysledokTestu {
+        VSETKY,
+        POZITIVNE,
+    }
+
+    private TypVysledokTestu getTypVysledkuTestu(String typ) {
+        if (typ.equals(pozitivne[0]))
+            return TypVysledokTestu.VSETKY;
+        if (typ.equals(pozitivne[1]))
+            return TypVysledokTestu.POZITIVNE;
+        System.out.println("Error: getTypVysledkuTestu");
+        return null;
+    }
+
+    private TypUzJednotky getTypUzJednotky(String typ) {
+        if (typ.equals(typy[0]))
+            return TypUzJednotky.VSETKY;
+        if (typ.equals(typy[1]) || typ.equals(okresyKraje[0]))
+            return TypUzJednotky.OKRES;
+        if (typ.equals(typy[2]) || typ.equals(okresyKraje[1]))
+            return TypUzJednotky.KRAJ;
+        if (typ.equals(typy[3]))
+            return TypUzJednotky.PRACOVISKO;
+        System.out.println("Error: getTypUzJednotky");
+        return null;
+    }
+
+    private void addVymazOsobu() {
+        JButton jButton = new JButton("Vymaz osobu");
+        jPanel.add(jButton);
+
+        int posunX = 7;
+        jButton.setBounds(posun + componentWidth * posunX, posun, componentWidth, componentHeight);
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String rodCislo = JOptionPane.showInputDialog("Zadaj rodne cislo");
+
+            }
+        });
+
+    }
+
+    private void addZoradOkresyKraje() {
+        JButton jButton = new JButton("Zorad okresy/kraje");
+        jPanel.add(jButton);
+
+        int posunX = 6;
+
+        JComboBox<String> comboBoxUzJednotky = new JComboBox<>(okresyKraje);
+        comboBoxUzJednotky.setSelectedIndex(0);
+        comboBoxUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance, componentWidth, 26);
+
+        jButton.setBounds(posun + componentWidth * posunX, posun, componentWidth, componentHeight);
+
+        JButton zobraz = new JButton("Zobraz");
+        zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 28, componentWidth, componentHeight);
+
+        JTextField date = new JTextField();
+        JTextField x = new JTextField();
+
+        date.setToolTipText("Zaciatocny datum");
+        x.setToolTipText("Pocet dni (X)");
+
+        date.setText("28.10.2021");
+        x.setText("5");
+
+        date.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance + 28, componentWidth, componentHeight);
+        x.setBounds(posun + componentWidth * posunX, componentHeight * 2 + componentDistance + 28, componentWidth, componentHeight);
+
+        typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+
+        comboBoxUzJednotky.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+            }
+        });
+
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                hladajPozitivneOsoby = !hladajPozitivneOsoby;
+                if (hladajPozitivneOsoby) {
+                    jPanel.add(date);
+                    jPanel.add(x);
+                    jPanel.add(zobraz);
+                    jPanel.add(comboBoxUzJednotky);
+                } else {
+                    jPanel.remove(date);
+                    jPanel.remove(x);
+                    jPanel.remove(zobraz);
+                    jPanel.remove(comboBoxUzJednotky);
+                }
+                jPanel.repaint();
+
+            }
+        });
+
+        zobraz.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (date.getText().length() == 10) {
+                    int day = Integer.parseInt(date.getText().substring(0, 2));
+                    int month = Integer.parseInt(date.getText().substring(3, 5));
+                    int year = Integer.parseInt(date.getText().substring(6));
+                    Date endDate = new Date(year - 1900, month - 1, day);
+
+                    int pocetDni = Integer.parseInt(x.getText());
+
+                    if (pocetDni > 0 && pocetDni < 29) {
+                        day -= pocetDni;
+                        if (day < 1) {
+                            month--;
+                            switch (month) {
+                                case 1:
+                                case 3:
+                                case 5:
+                                case 7:
+                                case 8:
+                                case 10:
+                                case 12:
+                                    day = 31 + day;
+                                    break;
+                                case 4:
+                                case 6:
+                                case 9:
+                                case 11:
+                                    day = 30 + day;
+                                case 2:
+                                    day = 28 + day;
+
+                            }
+                            if (month < 1) {
+                                year--;
+                                month = 12;
+                                day = 31 + day;
+                            }
+                        }
+                        Date startDate = new Date(year - 1900, month - 1, day);
+
+                        TTTree<Integer, UzemnaJednotka> uzemneJednotky = new TTTree<>();
+                        ArrayList<UzemnaJednotka> sortedUzemneJednotky = new ArrayList<>();
+                        String text = "";
+                        if (typUzJednotky == TypUzJednotky.OKRES) {
+                            for (Integer okresCode : app.getOkresCodes()) {
+                                Okres okres = app.getOkres(okresCode);
+                                OkresPocetPozitivnych okresPocetPozitivnych = new OkresPocetPozitivnych(okres.getKod(), okres.getNazov());
+                                okresPocetPozitivnych.setPocetPozitivnych(app.getDateIntervalTest(okres.getPozitivneTesty(), startDate, endDate).size());
+                                uzemneJednotky.add(okresPocetPozitivnych);
+                            }
+                            text = "Okresy\n";
+                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                            for (Integer krajeCodes : app.getKrajCodes()) {
+                                Kraj kraj = app.getKraj(krajeCodes);
+                                KrajPocetPozitivnych krajPocetPozitivnych = new KrajPocetPozitivnych(kraj.getKod(), kraj.getNazov());
+                                krajPocetPozitivnych.setPocetPozitivnych(app.getDateIntervalTest(kraj.getPozitivneTesty(), startDate, endDate).size());
+                                uzemneJednotky.add(krajPocetPozitivnych);
+                            }
+                            text = "Kraje\n";
+                        }
+
+                        sortedUzemneJednotky = app.getUzemneJednotkySorted(uzemneJednotky);
+
+                        int index = 1;
+                        if (sortedUzemneJednotky.size() == 0) {
+                            text = "Ziadne uzemne jednotky";
+                        }
+                        for (int i = sortedUzemneJednotky.size() - 1; i >= 0; i--) {
+                            UzemnaJednotka uzemnaJednotka = sortedUzemneJednotky.get(i);
+                            if (typUzJednotky == TypUzJednotky.OKRES) {
+                                OkresPocetPozitivnych okresPocetPozitivnych = (OkresPocetPozitivnych) uzemnaJednotka;
+                                text += "----------------------------------";
+                                text += String.format("\nOkres %d\n", index++);
+                                text += String.format("Nazov: %s\n", okresPocetPozitivnych.getNazov());
+                                text += String.format("Pocet pozitivnych: %d\n", okresPocetPozitivnych.getPocetPozitivnych());
+                            } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                                KrajPocetPozitivnych krajPocetPozitivnych = (KrajPocetPozitivnych) uzemnaJednotka;
+                                text += "----------------------------------";
+                                text += String.format("\nKraj %d\n", index++);
+                                text += String.format("Nazov: %s\n", krajPocetPozitivnych.getNazov());
+                                text += String.format("Pocet pozitivnych: %d\n", krajPocetPozitivnych.getPocetPozitivnych());
+                            }
+                        }
+                        JOptionPane.showMessageDialog(null, text, "Uzemne jednotky", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Pocet dni musi byt v rozmedzi 1-28");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Zadaj datum vo formate DD.MM.YYYY");
+                }
+
+
+            }
+        });
+    }
+
+    private void addVyhladajPozitivneOsoby() {
+        JButton jButton = new JButton("Vyhladaj (+) osoby");
+        jPanel.add(jButton);
+
+        int posunX = 5;
+
+        JComboBox<String> comboBoxUzJednotky = new JComboBox<>(typy);
+        comboBoxUzJednotky.setSelectedIndex(0);
+        comboBoxUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance, componentWidth, 26);
+
+        jButton.setBounds(posun + componentWidth * posunX, posun, componentWidth, componentHeight);
+
+        JButton zobraz = new JButton("Zobraz");
+        zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 28, componentWidth, componentHeight);
+
+        JTextField date = new JTextField();
+        JTextField x = new JTextField();
+        JTextField kodUzJednotky = new JTextField();
+
+        date.setToolTipText("Zaciatocny datum");
+        x.setToolTipText("Pocet dni (X)");
+
+        date.setText("28.10.2021");
+        x.setText("5");
+        kodUzJednotky.setText("205");
+
+        date.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance + 28, componentWidth, componentHeight);
+        x.setBounds(posun + componentWidth * posunX, componentHeight * 2 + componentDistance + 28, componentWidth, componentHeight);
+        kodUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 28, componentWidth, componentHeight);
+
+        typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+
+        comboBoxUzJednotky.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+                if (typUzJednotky != TypUzJednotky.VSETKY) {
+                    jPanel.add(kodUzJednotky);
+                    zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 4 + componentDistance + 26, componentWidth, componentHeight);
+                    kodUzJednotky.setToolTipText(comboBoxUzJednotky.getSelectedItem().toString());
+                } else {
+                    jPanel.remove(kodUzJednotky);
+                    zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 26, componentWidth, componentHeight);
+                }
+                jPanel.repaint();
+            }
+        });
+
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                hladajPozitivneOsoby = !hladajPozitivneOsoby;
+                if (hladajPozitivneOsoby) {
+                    jPanel.add(date);
+                    jPanel.add(x);
+                    jPanel.add(zobraz);
+                    jPanel.add(comboBoxUzJednotky);
+                } else {
+                    jPanel.remove(date);
+                    jPanel.remove(x);
+                    jPanel.remove(kodUzJednotky);
+                    jPanel.remove(zobraz);
+                    jPanel.remove(comboBoxUzJednotky);
+                }
+                jPanel.repaint();
+
+            }
+        });
+
+        zobraz.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (date.getText().length() == 10) {
+                    int day = Integer.parseInt(date.getText().substring(0, 2));
+                    int month = Integer.parseInt(date.getText().substring(3, 5));
+                    int year = Integer.parseInt(date.getText().substring(6));
+                    Date endDate = new Date(year - 1900, month - 1, day);
+
+                    int pocetDni = Integer.parseInt(x.getText());
+
+                    if (pocetDni > 0 && pocetDni < 29) {
+                        day -= pocetDni;
+                        if (day < 1) {
+                            month--;
+                            switch (month) {
+                                case 1:
+                                case 3:
+                                case 5:
+                                case 7:
+                                case 8:
+                                case 10:
+                                case 12:
+                                    day = 31 + day;
+                                    break;
+                                case 4:
+                                case 6:
+                                case 9:
+                                case 11:
+                                    day = 30 + day;
+                                case 2:
+                                    day = 28 + day;
+
+                            }
+                            if (month < 1) {
+                                year--;
+                                month = 12;
+                                day = 31 + day;
+                            }
+                        }
+                        Date startDate = new Date(year - 1900, month - 1, day);
+
+                        ArrayList<PCRTestDate> testy = new ArrayList<>();
+
+                        if (typUzJednotky == TypUzJednotky.VSETKY) {
+                            testy = app.getDateIntervalTest(app.getPcrTreePositive(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.PRACOVISKO) {
+                            testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.OKRES) {
+                            testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                            testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                        }
+
+                        String text = "Osoby\n";
+                        int index = 1;
+                        if (testy.size() == 0) {
+                            text = "Ziadne osoby";
+                        }
+                        for (PCRTestDate test : testy) {
+                            Okres okres = app.getOkres(test.getData().getKodOkresu());
+                            Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
+                            text += "----------------------------------";
+                            text += String.format("\nOsoba %d\n", index++);
+                            text += String.format("Rodne cislo: %s\n", test.getData().getRodCisloPacienta());
+                            Osoba osoba = test.getData().getOsoba();
+                            if (osoba != null) {
+                                text += String.format("Meno: %s\n", osoba.getMeno());
+                                text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
+                                text += String.format("Datum Narodenia: %s\n", osoba.getDatumNarodenia().getDate() + "." + (osoba.getDatumNarodenia().getMonth() + 1) + "." + (1900 + osoba.getDatumNarodenia().getYear()));
+                            } else {
+                                text += "Dalsie udaje neexistuju\n";
+                            }
+                            text += String.format("\nKod testu: %s\n", test.getData().getKodTestu());
+                            text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
+                            text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
+                            text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
+                            text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
+                            text += String.format("Nazov pracoviska: %s\n", pracovisko.getNazov());
+                            text += String.format("Nazov okresu: %s\n", okres.getNazov());
+                            text += String.format("Nazov kraja: %s\n", app.getKrajName(okres.getKodKraja()));
+                            if (test.getData().isVysledok()) {
+                                text += "Vysledok: Pozitivny\n";
+                            } else {
+                                text += "Vysledok: Negativny\n";
+                            }
+                            if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
+                                text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
+                            }
+                        }
+                        JOptionPane.showMessageDialog(null, text, "Pozitivne osoby", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Pocet dni musi byt v rozmedzi 1-28");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Zadaj datum vo formate DD.MM.YYYY");
+                }
+
+
+            }
+        });
+    }
+
+    private void addVyhladajTesty() {
+        JButton jButton = new JButton("Vyhladaj PCR testy");
+        jPanel.add(jButton);
+
+        int posunX = 4;
+
+        JComboBox<String> comboBoxUzJednotky = new JComboBox<>(typy);
+        comboBoxUzJednotky.setSelectedIndex(0);
+        comboBoxUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance, componentWidth, 26);
+
+        JComboBox<String> comboBoxPozitivne = new JComboBox<>(pozitivne);
+        comboBoxPozitivne.setSelectedIndex(0);
+        comboBoxPozitivne.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance + 26 + 1, componentWidth, 26);
+
+        jButton.setBounds(posun + componentWidth * posunX, posun, componentWidth, componentHeight);
+
+        JButton zobraz = new JButton("Zobraz");
+        zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 26 * 2 + 2, componentWidth, componentHeight);
+
+        JTextField startDate = new JTextField();
+        JTextField endDate = new JTextField();
+        JTextField kodUzJednotky = new JTextField();
+
+        startDate.setToolTipText("Zaciatocny datum");
+        endDate.setToolTipText("Koncovy datum");
+
+        startDate.setText("01.01.2020");
+        endDate.setText("01.01.2022");
+        kodUzJednotky.setText("205");
+
+        startDate.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance + 26 * 2 + 2, componentWidth, componentHeight);
+        endDate.setBounds(posun + componentWidth * posunX, componentHeight * 2 + componentDistance + 26 * 2 + 2, componentWidth, componentHeight);
+        kodUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 26 * 2 + 2, componentWidth, componentHeight);
+
+        typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+        typVysledokTestu = getTypVysledkuTestu(comboBoxPozitivne.getSelectedItem().toString());
+
+        comboBoxUzJednotky.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+                typVysledokTestu = getTypVysledkuTestu(comboBoxPozitivne.getSelectedItem().toString());
+                if (typUzJednotky != TypUzJednotky.VSETKY) {
+                    jPanel.add(kodUzJednotky);
+                    zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 4 + componentDistance + 26 * 2, componentWidth, componentHeight);
+                    kodUzJednotky.setToolTipText(comboBoxUzJednotky.getSelectedItem().toString());
+                } else {
+                    jPanel.remove(kodUzJednotky);
+                    zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 26 * 2, componentWidth, componentHeight);
+                }
+                jPanel.repaint();
+            }
+        });
+
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                hladajTestyPrePracovisko = !hladajTestyPrePracovisko;
+                if (hladajTestyPrePracovisko) {
+                    jPanel.add(startDate);
+                    jPanel.add(endDate);
+                    jPanel.add(zobraz);
+                    jPanel.add(comboBoxUzJednotky);
+                    jPanel.add(comboBoxPozitivne);
+                } else {
+                    jPanel.remove(startDate);
+                    jPanel.remove(endDate);
+                    jPanel.remove(kodUzJednotky);
+                    jPanel.remove(zobraz);
+                    jPanel.remove(comboBoxPozitivne);
+                    jPanel.remove(comboBoxUzJednotky);
+                }
+                jPanel.repaint();
+
+            }
+        });
+
+        zobraz.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (startDate.getText().length() == 10 && endDate.getText().length() == 10) {
+                    int day = Integer.parseInt(startDate.getText().substring(0, 2));
+                    int month = Integer.parseInt(startDate.getText().substring(3, 5));
+                    int year = Integer.parseInt(startDate.getText().substring(6));
+                    Date startDate = new Date(year - 1900, month - 1, day);
+
+                    day = Integer.parseInt(endDate.getText().substring(0, 2));
+                    month = Integer.parseInt(endDate.getText().substring(3, 5));
+                    year = Integer.parseInt(endDate.getText().substring(6));
+                    Date endDate = new Date(year - 1900, month - 1, day);
+
+                    ArrayList<PCRTestDate> testy = new ArrayList<>();
+
+                    if (typVysledokTestu == TypVysledokTestu.VSETKY) {
+                        if (typUzJednotky == TypUzJednotky.VSETKY) {
+                            testy = app.getDateIntervalTest(app.getPcrTreeDate(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.PRACOVISKO) {
+                            testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.OKRES) {
+                            testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                            testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
+                        }
+                    } else if (typVysledokTestu == TypVysledokTestu.POZITIVNE) {
+                        if (typUzJednotky == TypUzJednotky.VSETKY) {
+                            testy = app.getDateIntervalTest(app.getPcrTreePositive(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.PRACOVISKO) {
+                            testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.OKRES) {
+                            testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                            testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                        }
+                    }
+
+                    String text = "PCR testy";
+                    int index = 1;
+                    for (PCRTestDate test : testy) {
+                        Okres okres = app.getOkres(test.getData().getKodOkresu());
+                        Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
+                        text += String.format("\n\nTest %d\n", index++);
+                        text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
+                        text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
+                        text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
+                        text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
+                        text += String.format("Nazov pracoviska: %s\n", pracovisko.getNazov());
+                        text += String.format("Nazov okresu: %s\n", okres.getNazov());
+                        text += String.format("Nazov kraja: %s\n", app.getKrajName(okres.getKodKraja()));
+                        if (test.getData().isVysledok()) {
+                            text += "Vysledok: Pozitivny\n";
+                        } else {
+                            text += "Vysledok: Negativny\n";
+                        }
+                        if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
+                            text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
+                        }
+                        text += "\nOsoba:\n";
+                        text += String.format("Rodne cislo: %s\n", test.getData().getRodCisloPacienta());
+                        Osoba osoba = test.getData().getOsoba();
+                        if (osoba != null) {
+                            text += String.format("Meno: %s\n", osoba.getMeno());
+                            text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
+                            text += String.format("Datum Narodenia: %s\n", osoba.getDatumNarodenia().getDate() + "." + (osoba.getDatumNarodenia().getMonth() + 1) + "." + (1900 + osoba.getDatumNarodenia().getYear()));
+                        } else {
+                            text += "Dalsie udaje neexistuju\n";
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Zadaj datum vo formate DD.MM.YYYY");
+                }
+
+
+            }
+        });
     }
 
     private void addPridajOsoba() {
         JButton jButton = new JButton("Pridaj osobu");
         jPanel.add(jButton);
 
-        jButton.setBounds(posun + componentWidth * 6, posun + componentSecondLine, componentWidth, componentHeight);
+        jButton.setBounds(posun + componentWidth, posun, componentWidth, componentHeight);
 
         JButton uloz = new JButton("Uloz");
-        uloz.setBounds(posun + componentWidth * 6, componentHeight * 4 + componentDistance + componentSecondLine, componentWidth, componentHeight);
+        uloz.setBounds(posun + componentWidth, componentHeight * 4 + componentDistance, componentWidth, componentHeight);
 
         JTextField meno = new JTextField();
         JTextField priezvisko = new JTextField();
@@ -94,9 +641,9 @@ public class GraphicalApp {
         priezvisko.setToolTipText("Priezvisko");
         rodneCislo.setToolTipText("Rodne cislo");
 
-        meno.setBounds(posun + componentWidth * 6, componentHeight + componentDistance + componentSecondLine, componentWidth, componentHeight);
-        priezvisko.setBounds(posun + componentWidth * 6, componentHeight * 2 + componentDistance + componentSecondLine, componentWidth, componentHeight);
-        rodneCislo.setBounds(posun + componentWidth * 6, componentHeight * 3 + componentDistance + componentSecondLine, componentWidth, componentHeight);
+        meno.setBounds(posun + componentWidth, componentHeight + componentDistance, componentWidth, componentHeight);
+        priezvisko.setBounds(posun + componentWidth, componentHeight * 2 + componentDistance, componentWidth, componentHeight);
+        rodneCislo.setBounds(posun + componentWidth, componentHeight * 3 + componentDistance, componentWidth, componentHeight);
 
         jButton.addActionListener(new ActionListener() {
             @Override
@@ -145,219 +692,11 @@ public class GraphicalApp {
         });
     }
 
-    private void addAllTestyPracovisko() {
-        JButton jButton = new JButton("Testy pre pracovisko");
-        jPanel.add(jButton);
-
-        jButton.setBounds(posun + componentWidth * 4, posun + componentSecondLine, componentWidth, componentHeight);
-
-        JButton zobrazPcrTest = new JButton("Zobraz");
-        zobrazPcrTest.setBounds(posun + componentWidth * 4, componentHeight * 4 + componentDistance + componentSecondLine, componentWidth, componentHeight);
-
-        JTextField startDate = new JTextField();
-        JTextField endDate = new JTextField();
-        JTextField kodPracoviska = new JTextField();
-
-        startDate.setToolTipText("Zaciatocny datum");
-        endDate.setToolTipText("Koncovy datum");
-        kodPracoviska.setToolTipText("Kod okresu");
-
-        startDate.setText("01.01.2020");
-        endDate.setText("01.01.2022");
-        kodPracoviska.setText("205");
-
-
-        startDate.setBounds(posun + componentWidth * 4, componentHeight + componentDistance + componentSecondLine, componentWidth, componentHeight);
-        endDate.setBounds(posun + componentWidth * 4, componentHeight * 2 + componentDistance + componentSecondLine, componentWidth, componentHeight);
-        kodPracoviska.setBounds(posun + componentWidth * 4, componentHeight * 3 + componentDistance + componentSecondLine, componentWidth, componentHeight);
-
-        jButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                hladajTestyPrePracovisko = !hladajTestyPrePracovisko;
-                if (hladajTestyPrePracovisko) {
-                    jPanel.add(startDate);
-                    jPanel.add(endDate);
-                    jPanel.add(kodPracoviska);
-                    jPanel.add(zobrazPcrTest);
-                } else {
-                    jPanel.remove(startDate);
-                    jPanel.remove(endDate);
-                    jPanel.remove(kodPracoviska);
-                    jPanel.remove(zobrazPcrTest);
-                }
-                jPanel.repaint();
-
-            }
-        });
-
-        zobrazPcrTest.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (startDate.getText().length() == 10 && endDate.getText().length() == 10) {
-                    int day = Integer.parseInt(startDate.getText().substring(0, 2));
-                    int month = Integer.parseInt(startDate.getText().substring(3, 5));
-                    int year = Integer.parseInt(startDate.getText().substring(6));
-                    Date startDate = new Date(year - 1900, month - 1, day);
-
-                    day = Integer.parseInt(endDate.getText().substring(0, 2));
-                    month = Integer.parseInt(endDate.getText().substring(3, 5));
-                    year = Integer.parseInt(endDate.getText().substring(6));
-                    Date endDate = new Date(year - 1900, month - 1, day);
-
-                    ArrayList<PCRTestDate> testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodPracoviska.getText())).getTesty(), startDate, endDate);
-                    String text = "PCR testy";
-                    int index = 1;
-                    for (PCRTestDate test : testy) {
-                        Okres okres = app.getOkres(test.getData().getKodOkresu());
-                        Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
-                        text += String.format("\n\nTest %d\n", index++);
-                        text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
-                        text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
-                        text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
-                        text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
-                        text += String.format("Nazov pracoviska: %s\n", pracovisko.getNazov());
-                        text += String.format("Nazov okresu: %s\n", okres.getNazov());
-                        text += String.format("Nazov kraja: %s\n", app.getKrajName(okres.getKodKraja()));
-                        if (test.getData().isVysledok()) {
-                            text += "Vysledok: Pozitivny\n";
-                        } else {
-                            text += "Vysledok: Negativny\n";
-                        }
-                        if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
-                            text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
-                        }
-                        text += "\nOsoba:\n";
-                        text += String.format("Rodne cislo: %s\n", test.getData().getRodCisloPacienta());
-                        Osoba osoba = test.getData().getOsoba();
-                        if (osoba != null) {
-                            text += String.format("Meno: %s\n", osoba.getMeno());
-                            text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
-                            text += String.format("Datum Narodenia: %s\n", osoba.getDatumNarodenia().getDate() + "." + (osoba.getDatumNarodenia().getMonth() + 1) + "." + (1900 + osoba.getDatumNarodenia().getYear()));
-                        } else {
-                            text += "Dalsie udaje neexistuju\n";
-                        }
-                    }
-                    JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "Zadaj datum vo formate DD.MM.YYYY");
-                }
-
-
-            }
-        });
-    }
-
-    private void addVypisPozitivnychTestovPreOkres() {
-        JButton jButton = new JButton("Testy (+) pre okres");
-        jPanel.add(jButton);
-
-        jButton.setBounds(posun + componentWidth * 2, posun, componentWidth, componentHeight);
-
-        JButton zobrazPcrTest = new JButton("Zobraz");
-        zobrazPcrTest.setBounds(posun + componentWidth * 2, componentHeight * 4 + componentDistance, componentWidth, componentHeight);
-
-        JTextField startDate = new JTextField();
-        JTextField endDate = new JTextField();
-        JTextField kodOkresu = new JTextField();
-
-        startDate.setToolTipText("Zaciatocny datum");
-        endDate.setToolTipText("Koncovy datum");
-        kodOkresu.setToolTipText("Kod okresu");
-
-        startDate.setText("01.01.2020");
-        endDate.setText("01.01.2022");
-        kodOkresu.setText("205");
-
-
-        startDate.setBounds(posun + componentWidth * 2, componentHeight + componentDistance, componentWidth, componentHeight);
-        endDate.setBounds(posun + componentWidth * 2, componentHeight * 2 + componentDistance, componentWidth, componentHeight);
-        kodOkresu.setBounds(posun + componentWidth * 2, componentHeight * 3 + componentDistance, componentWidth, componentHeight);
-
-        jButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                hladajPreOkresy = !hladajPreOkresy;
-                if (hladajPreOkresy) {
-                    jPanel.add(startDate);
-                    jPanel.add(endDate);
-                    jPanel.add(kodOkresu);
-                    jPanel.add(zobrazPcrTest);
-                } else {
-                    jPanel.remove(startDate);
-                    jPanel.remove(endDate);
-                    jPanel.remove(kodOkresu);
-                    jPanel.remove(zobrazPcrTest);
-                }
-                jPanel.repaint();
-
-            }
-        });
-
-        zobrazPcrTest.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (startDate.getText().length() == 10 && endDate.getText().length() == 10) {
-                    int day = Integer.parseInt(startDate.getText().substring(0, 2));
-                    int month = Integer.parseInt(startDate.getText().substring(3, 5));
-                    int year = Integer.parseInt(startDate.getText().substring(6));
-                    Date startDate = new Date(year - 1900, month - 1, day);
-
-                    day = Integer.parseInt(endDate.getText().substring(0, 2));
-                    month = Integer.parseInt(endDate.getText().substring(3, 5));
-                    year = Integer.parseInt(endDate.getText().substring(6));
-                    Date endDate = new Date(year - 1900, month - 1, day);
-
-                    ArrayList<PCRTestDate> testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodOkresu.getText())).getPozitivneTesty(), startDate, endDate);
-                    String text = "PCR testy";
-                    int index = 1;
-                    for (PCRTestDate test : testy) {
-                        Okres okres = app.getOkres(test.getData().getKodOkresu());
-                        Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
-                        text += String.format("\n\nTest %d\n", index++);
-                        text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
-                        text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
-                        text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
-                        text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
-                        text += String.format("Nazov pracoviska: %s\n", pracovisko.getNazov());
-                        text += String.format("Nazov okresu: %s\n", okres.getNazov());
-                        text += String.format("Nazov kraja: %s\n", app.getKrajName(okres.getKodKraja()));
-                        if (test.getData().isVysledok()) {
-                            text += "Vysledok: Pozitivny\n";
-                        } else {
-                            text += "Vysledok: Negativny\n";
-                        }
-                        if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
-                            text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
-                        }
-                        text += "\nOsoba:\n";
-                        text += String.format("Rodne cislo: %s\n", test.getData().getRodCisloPacienta());
-                        Osoba osoba = test.getData().getOsoba();
-                        if (osoba != null) {
-                            text += String.format("Meno: %s\n", osoba.getMeno());
-                            text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
-                            text += String.format("Datum Narodenia: %s\n", osoba.getDatumNarodenia().getDate() + "." + (osoba.getDatumNarodenia().getMonth() + 1) + "." + (1900 + osoba.getDatumNarodenia().getYear()));
-                        } else {
-                            text += "Dalsie udaje neexistuju\n";
-                        }
-                    }
-                    JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "Zadaj datum vo formate DD.MM.YYYY");
-                }
-
-
-            }
-        });
-    }
-
     private void addVypisTestovPacienta() {
         JButton jButton = new JButton("Zobraz testy pacienta");
         jPanel.add(jButton);
 
-        jButton.setBounds(posun + componentWidth, posun + componentHeight, componentWidth, componentHeight);
+        jButton.setBounds(posun + componentWidth * 3, posun, componentWidth, componentHeight);
 
         jButton.addActionListener(new ActionListener() {
             @Override
@@ -405,7 +744,7 @@ public class GraphicalApp {
         JButton jButton = new JButton("Vyhladaj PCR test");
         jPanel.add(jButton);
 
-        jButton.setBounds(posun + componentWidth, posun, componentWidth, componentHeight);
+        jButton.setBounds(posun + componentWidth * 2, posun, componentWidth, componentHeight);
 
         jButton.addActionListener(new ActionListener() {
             @Override

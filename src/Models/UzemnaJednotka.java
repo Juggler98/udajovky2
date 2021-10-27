@@ -36,7 +36,7 @@ public abstract class UzemnaJednotka implements Comparable<UzemnaJednotka>, Tree
         return this.pozitivneTesty;
     }
 
-    public int getKod() {
+    public Integer getKod() {
         return kod;
     }
 

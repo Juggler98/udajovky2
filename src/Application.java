@@ -70,6 +70,23 @@ public class Application {
 //        return okresTree.search(kodOkresu).getNazov();
 //    }
 
+
+    public Integer[] getOkresCodes() {
+        return okresCodes;
+    }
+
+    public Integer[] getKrajCodes() {
+        return krajCodes;
+    }
+
+    public TTTree<Date, PCRTestDate> getPcrTreeDate() {
+        return pcrTreeDate;
+    }
+
+    public TTTree<Date, PCRTestDate> getPcrTreePositive() {
+        return pcrTreePositive;
+    }
+
     public Okres getOkres(int kodOkresu) {
         return (Okres) okresTree.search(kodOkresu);
     }
@@ -116,6 +133,12 @@ public class Application {
         return tree.getData();
     }
 
+    public ArrayList<UzemnaJednotka> getUzemneJednotkySorted(TTTree<Integer, UzemnaJednotka> tree) {
+        tree.clearData();
+        tree.setInterval((TTTreeNode<Integer, UzemnaJednotka>) tree.getRoot(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return tree.getData();
+    }
+
     public boolean addPCRTest(String kodTestu, String rodCislo, int kodPracoviska, int kodOkresu, int kodKraju, boolean vysledok, String poznamka, Osoba osoba) {
         //Date date = new Date(rok - 1900, mesiac - 1, den);
         //Osoba osoba = getOsoba(rodCislo);
@@ -140,6 +163,16 @@ public class Application {
             pozitivne = pcrTreePositive.add(pcrTestDate);
         }
         return pcrTreeCode.add(pcrTestCode) && pcrTreeDate.add(pcrTestDate) && pracovisko && kraj && okres && pracoviskoPozitivne && krajPozitivne && okresPozitivne && pozitivne;
+    }
+
+    public Osoba removeOsoba(String rodCislo) {
+        Osoba osoba = personTree.remove(rodCislo);
+        for (PCRTestDate test : osoba.getTesty()) {
+            if (test.getData().isVysledok()) {
+//                getPracovisko(test.getData().getKodPracoviska()).getPozitivneTesty().remove();
+            }
+        }
+        return osoba;
     }
 
     public Osoba addOsoba(String meno, String priezvisko, String rodCislo) {
