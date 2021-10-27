@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class PCRTestDate implements Comparable<PCRTestDate>, TreeKey<Date> {
 
-    private PCRTest data;
+    private final PCRTest data;
 
     public PCRTestDate(PCRTest data) {
         this.data = data;

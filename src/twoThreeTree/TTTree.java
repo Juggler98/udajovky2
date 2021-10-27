@@ -414,6 +414,52 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         return key.compareTo(result.getDataL().getKey()) == 0 ? result : null;
     }
 
+    private TTTreeNode<K, T> searchNodeWithData(T data) {
+        TTTreeNode<K, T> result = (TTTreeNode<K, T>) this.root;
+        if (result == null) {
+            return null;
+        }
+        while (data.compareTo(result.getDataL()) != 0) {
+            if (result.hasDataR() && data.compareTo(result.getDataR()) == 0) {
+                break;
+            }
+            if (result.isThreeNode()) {
+                if (data.compareTo(result.getDataL()) < 0) {
+                    if (result.hasLeftSon())
+                        result = result.getLeftSon();
+                    else
+                        break;
+                } else if (data.compareTo(result.getDataR()) > 0) {
+                    if (result.hasRightSon())
+                        result = result.getRightSon();
+                    else
+                        break;
+                } else {
+                    if (result.hasMiddleSon())
+                        result = result.getMiddleSon();
+                    else
+                        break;
+                }
+            } else {
+                if (data.compareTo(result.getDataL()) < 0) {
+                    if (result.hasLeftSon())
+                        result = result.getLeftSon();
+                    else
+                        break;
+                } else {
+                    if (result.hasRightSon())
+                        result = result.getRightSon();
+                    else
+                        break;
+                }
+            }
+        }
+        if (result.isThreeNode()) {
+            return (data.compareTo(result.getDataL()) == 0 || data.compareTo(result.getDataR()) == 0) ? result : null;
+        }
+        return data.compareTo(result.getDataL()) == 0 ? result : null;
+    }
+
     //public TTTreeNode<K, T> getRoot() {
     //return root;
     //}
@@ -437,6 +483,29 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         T deletedData;
         boolean left;
         if (key.compareTo(node.getDataL().getKey()) == 0) {
+            deletedData = node.getDataL();
+            left = true;
+        } else {
+            deletedData = node.getDataR();
+            left = false;
+        }
+        if (!tryToRemove(node, left)) {
+            System.out.println("Mazanie sa nepodarilo, kluc: " + deletedData.getKey());
+            return null;
+        }
+        size--;
+        return deletedData;
+    }
+
+    public T removeData(T data) {
+        TTTreeNode<K, T> node = searchNodeWithData(data);
+        if (node == null) {
+            System.out.println("Mazanie, prvok neexistuje: " + data.getKey());
+            return null;
+        }
+        T deletedData;
+        boolean left;
+        if (data.compareTo(node.getDataL()) == 0) {
             deletedData = node.getDataL();
             left = true;
         } else {

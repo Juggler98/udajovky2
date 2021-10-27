@@ -4,7 +4,7 @@ import universalTree.TreeKey;
 
 public class PCRTestKod implements Comparable<PCRTestKod>, TreeKey<String>  {
 
-    private PCRTest data;
+    private final PCRTest data;
 
     public PCRTestKod(PCRTest data) {
         this.data = data;

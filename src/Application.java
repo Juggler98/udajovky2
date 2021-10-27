@@ -103,7 +103,8 @@ public class Application {
     }
 
     public PCRTest getPCRTest(String kodTestu) {
-        return pcrTreeCode.search(kodTestu).getData();
+        PCRTestKod test = pcrTreeCode.search(kodTestu);
+        return test == null ? null : test.getData();
     }
 
     public Osoba getOsoba(String rodCislo) {
@@ -167,12 +168,40 @@ public class Application {
 
     public Osoba removeOsoba(String rodCislo) {
         Osoba osoba = personTree.remove(rodCislo);
-        for (PCRTestDate test : osoba.getTesty()) {
-            if (test.getData().isVysledok()) {
-//                getPracovisko(test.getData().getKodPracoviska()).getPozitivneTesty().remove();
+        if (osoba != null) {
+            for (PCRTestDate test : osoba.getTesty()) {
+                if (this.removePCRTest(test.getData().getKodTestu()) == null) {
+                    return null;
+                }
+            }
+            return osoba;
+        }
+        return null;
+    }
+
+    public PCRTest removePCRTest(String kodTestu) {
+        PCRTestKod test = pcrTreeCode.remove(kodTestu);
+        PCRTestDate testDate = new PCRTestDate(test.getData());
+        if (test.getData().isVysledok()) {
+            getPracovisko(test.getData().getKodPracoviska()).getPozitivneTesty().removeData(testDate);
+            getOkres(test.getData().getKodOkresu()).getPozitivneTesty().removeData(testDate);
+            getKraj(test.getData().getKodKraja()).getPozitivneTesty().removeData(testDate);
+            pcrTreePositive.removeData(testDate);
+        }
+        getPracovisko(test.getData().getKodPracoviska()).getTesty().removeData(testDate);
+        getOkres(test.getData().getKodOkresu()).getTesty().removeData(testDate);
+        getKraj(test.getData().getKodKraja()).getTesty().removeData(testDate);
+        pcrTreeDate.removeData(testDate);
+        ArrayList<PCRTestDate> testyOsoby = test.getData().getOsoba().getTesty();
+        for (int i = 0; i < testyOsoby.size(); i++) {
+            PCRTestDate pcrTestDate = testyOsoby.get(i);
+            if (pcrTestDate.compareTo(testDate) == 0) {
+                testyOsoby.remove(i);
+                System.out.println("Deleted index: " + i);
+                break;
             }
         }
-        return osoba;
+        return test.getData();
     }
 
     public Osoba addOsoba(String meno, String priezvisko, String rodCislo) {

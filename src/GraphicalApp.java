@@ -51,6 +51,8 @@ public class GraphicalApp {
         addVyhladajTesty();
         addVyhladajPozitivneOsoby();
         addZoradOkresyKraje();
+        addVymazOsobu();
+        addVymazTest();
 
         test();
 
@@ -120,6 +122,58 @@ public class GraphicalApp {
         return null;
     }
 
+    private void addVymazTest() {
+        JButton jButton = new JButton("Vymaz test");
+        jPanel.add(jButton);
+
+        int posunX = 8;
+        jButton.setBounds(posun + componentWidth * posunX, posun, componentWidth, componentHeight);
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String kodTestu = JOptionPane.showInputDialog("Zadaj kod testu");
+                if (kodTestu != null) {
+                    PCRTest test = app.removePCRTest(kodTestu);
+                    if (test != null) {
+                        Okres okres = app.getOkres(test.getKodOkresu());
+                        Pracovisko pracovisko = app.getPracovisko(test.getKodPracoviska());
+                        String text = String.format("Kod testu: %s\n", test.getKodTestu());
+                        text += String.format("Datum testu: %s\n", test.getDatum().getDate() + "." + (test.getDatum().getMonth() + 1) + "." + (1900 + test.getDatum().getYear()));
+                        text += String.format("Kod pracoviska: %s\n", test.getKodPracoviska());
+                        text += String.format("Kod okresu: %s\n", test.getKodOkresu());
+                        text += String.format("Kod kraja: %s\n", test.getKodKraja());
+                        text += String.format("Nazov pracoviska: %s\n", pracovisko.getNazov());
+                        text += String.format("Nazov okresu: %s\n", okres.getNazov());
+                        text += String.format("Nazov kraja: %s\n", app.getKrajName(okres.getKodKraja()));
+                        if (test.isVysledok()) {
+                            text += "Vysledok: Pozitivny\n";
+                        } else {
+                            text += "Vysledok: Negativny\n";
+                        }
+                        if (test.getPoznamka() != null && !test.getPoznamka().equals("")) {
+                            text += String.format("Poznamka: %s\n", test.getPoznamka());
+                        }
+                        text += "\nOsoba:\n";
+                        text += String.format("Rodne cislo: %s\n", test.getRodCisloPacienta());
+                        Osoba osoba = test.getOsoba();
+                        if (osoba != null) {
+                            text += String.format("Meno: %s\n", osoba.getMeno());
+                            text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
+                            text += String.format("Datum Narodenia: %s\n", osoba.getDatumNarodenia().getDate() + "." + (osoba.getDatumNarodenia().getMonth() + 1) + "." + (1900 + osoba.getDatumNarodenia().getYear()));
+                        } else {
+                            text += "Dalsie udaje neexistuju\n";
+                        }
+                        JOptionPane.showMessageDialog(null, text, "Osoba vymazana", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        String text = String.format("Test s kodom %s sa nepodarilo vymazat.\nSkontrolujte ci test existuje.", kodTestu);
+                        JOptionPane.showMessageDialog(null, text);
+                    }
+                }
+            }
+        });
+    }
+
     private void addVymazOsobu() {
         JButton jButton = new JButton("Vymaz osobu");
         jPanel.add(jButton);
@@ -131,10 +185,18 @@ public class GraphicalApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String rodCislo = JOptionPane.showInputDialog("Zadaj rodne cislo");
-
+                if (rodCislo != null) {
+                    Osoba osoba = app.removeOsoba(rodCislo);
+                    if (osoba != null) {
+                        String text = String.format("Meno: %s\nPriezvisko: %s\nRod. cislo: %s", osoba.getMeno(), osoba.getPriezvisko(), osoba.getRodCislo());
+                        JOptionPane.showMessageDialog(null, text, "Osoba vymazana", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        String text = String.format("Osobu s rod. cislom %s sa nepodarilo vymazat.\nSkontrolujte ci osoba existuje.", rodCislo);
+                        JOptionPane.showMessageDialog(null, text);
+                    }
+                }
             }
         });
-
     }
 
     private void addZoradOkresyKraje() {
@@ -452,6 +514,10 @@ public class GraphicalApp {
                                 text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
                             }
                         }
+                        JTextPane jTextPane = new JTextPane();
+                        jTextPane.setText(text);
+                        jTextPane.setBounds(10, 500, 500, 500);
+                        jPanel.add(jTextPane);
                         JOptionPane.showMessageDialog(null, text, "Pozitivne osoby", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "Pocet dni musi byt v rozmedzi 1-28");
@@ -588,6 +654,7 @@ public class GraphicalApp {
                         Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
                         text += String.format("\n\nTest %d\n", index++);
                         text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
+                        text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
                         text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
                         text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
                         text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
@@ -716,6 +783,7 @@ public class GraphicalApp {
                             Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
                             text += String.format("\n\nTest %d\n", index++);
                             text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
+                            text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
                             text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
                             text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
                             text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
@@ -756,6 +824,7 @@ public class GraphicalApp {
                         Okres okres = app.getOkres(test.getKodOkresu());
                         Pracovisko pracovisko = app.getPracovisko(test.getKodPracoviska());
                         String text = String.format("Kod testu: %s\n", test.getKodTestu());
+                        text += String.format("Datum testu: %s\n", test.getDatum().getDate() + "." + (test.getDatum().getMonth() + 1) + "." + (1900 + test.getDatum().getYear()));
                         text += String.format("Kod pracoviska: %s\n", test.getKodPracoviska());
                         text += String.format("Kod okresu: %s\n", test.getKodOkresu());
                         text += String.format("Kod kraja: %s\n", test.getKodKraja());
