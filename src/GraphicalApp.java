@@ -58,8 +58,8 @@ public class GraphicalApp {
 
         jFrame.add(jPanel);
 
-        app.addRandomPersons(100000);
-        app.addRandomPCRTest(100000);
+       // app.addRandomPersons(100);
+       // app.addRandomPCRTest(100);
 
         addVytvorPCRTestComponents();
         addVyhladajPCRTest();

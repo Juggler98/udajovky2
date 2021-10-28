@@ -23,9 +23,9 @@ public class Main {
         //System.out.println(okres.getNazov());
         //System.out.println(app.getKrajName(okres.getKodKraja()));
 
-        //new GraphicalApp();
+        new GraphicalApp();
 
-        TestGenerator test = new TestGenerator();
-        test.runTests();
+        //TestGenerator test = new TestGenerator();
+        //test.runTests();
     }
 }

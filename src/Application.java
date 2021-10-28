@@ -2,12 +2,13 @@ import Models.*;
 import twoThreeTree.TTTree;
 import twoThreeTree.TTTreeNode;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Application {
 
@@ -154,10 +155,38 @@ public class Application {
 //    }
 
     public void writeToFile(String fileName) {
-        String str = "Hello";
+        String text;
+        ArrayList<PCRTestCode> testy = this.pcrTreeCode.getInOrderData();
+        ArrayList<Osoba> osoby = this.personTree.getInOrderData();
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-            writer.write(str);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName + ".csv"));
+            for (Osoba osoba : osoby) {
+                text = "";
+                text += osoba.getRodCislo() + ",";
+                text += osoba.getMeno() + ",";
+                text += osoba.getPriezvisko();
+                text += "\n";
+                writer.write(text);
+            }
+            writer.write("END\n");
+            for (PCRTestCode test : testy) {
+                text = "";
+                text += test.getData().getKodTestu() + ",";
+                text += test.getData().getRodCisloPacienta() + ",";
+                text += test.getData().getKodPracoviska() + ",";
+                text += test.getData().getKodOkresu() + ",";
+                text += test.getData().getKodKraja() + ",";
+                text += test.getData().isVysledok() + ",";
+                if (test.getData().getPoznamka() != null) {
+                    text += test.getData().getPoznamka() + ",";
+                } else {
+                    text += "" + ",";
+                }
+                Date date = test.getData().getDatum();
+                text += date.getDate() + "-" + (date.getMonth() + 1) + "-" + (date.getYear() + 1900) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                text += "\n";
+                writer.write(text);
+            }
             writer.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -166,7 +195,40 @@ public class Application {
     }
 
     public void loadFromFile(String fileName) {
-
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName + ".csv"));
+            String line = reader.readLine();
+            boolean readingPersons = true;
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            while (line != null) {
+                //System.out.println(line);
+                if (line.equals("END")) {
+                    readingPersons = false;
+                    line = reader.readLine();
+                }
+                String[] data = line.split(",");
+                if (readingPersons) {
+                    addOsoba(data[1], data[2], data[0]);
+                    for (String d : data) {
+                        //System.out.println(d);
+                    }
+                } else {
+                    //String kodTestu, String rodCisloPacienta, int kodPracoviska, int kodOkresu, int kodKraja, boolean vysledok, String poznamka, Osoba osoba, Date datum
+                    for (String d : data) {
+                        //System.out.println(d);
+                    }
+                    Date date = formatter.parse(data[7]);
+                    //System.out.println(date);
+                    Osoba osoba = this.getOsoba(data[1]);
+                    addPCRTest(data[0], data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), Boolean.parseBoolean(data[5]), data[6], osoba, date);
+                }
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (Exception e) {
+            System.out.println("Error: Reading");
+            System.out.println(e.getMessage());
+        }
     }
 
     public boolean addPCRTest(String kodTestu, String rodCislo, int kodPracoviska, int kodOkresu, int kodKraju, boolean vysledok, String poznamka, Osoba osoba, Date datum) {
