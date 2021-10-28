@@ -1,5 +1,6 @@
 package Models;
 
+import twoThreeTree.TTTree;
 import universalTree.TreeKey;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class Osoba implements Comparable<Osoba>, TreeKey<String> {
     private final String priezvisko;
     private final Date datumNarodenia;
     private final String rodCislo;
-    private final ArrayList<PCRTestDate> testy = new ArrayList<>();
+    private final TTTree<Date, PCRTestDate> testy = new TTTree<>();
 
     public Osoba(String meno, String priezvisko, Date datumNarodenia, String rodCislo) {
         this.meno = meno;
@@ -21,7 +22,7 @@ public class Osoba implements Comparable<Osoba>, TreeKey<String> {
         this.rodCislo = rodCislo;
     }
 
-    public ArrayList<PCRTestDate> getTesty() {
+    public TTTree<Date, PCRTestDate> getTesty() {
         return testy;
     }
 

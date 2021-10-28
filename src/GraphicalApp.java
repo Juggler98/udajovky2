@@ -58,8 +58,8 @@ public class GraphicalApp {
 
         jFrame.add(jPanel);
 
-        app.addRandomPersons(10000);
-        app.addRandomPCRTest(10000);
+        app.addRandomPersons(100000);
+        app.addRandomPCRTest(100000);
 
         addVytvorPCRTestComponents();
         addVyhladajPCRTest();
@@ -71,7 +71,7 @@ public class GraphicalApp {
         addVymazOsobu();
         addVymazTest();
 
-        //test();
+        test();
 
 //        ArrayList<Osoba> interval = app.getIntervalOsoba("550000123456", "6000001234");
 //        for (Osoba o : interval) {
@@ -809,7 +809,7 @@ public class GraphicalApp {
                 if (rodCislo != null) {
                     Osoba osoba = app.getOsoba(rodCislo);
                     if (osoba != null) {
-                        ArrayList<PCRTestDate> testy = osoba.getTesty();
+                        ArrayList<PCRTestDate> testy = app.getDateIntervalTest(osoba.getTesty(), new Date(0,0,0), new Date(Integer.MAX_VALUE, 11, 31));
                         String text = String.format("Rodne cislo: %s\n", osoba.getRodCislo());
                         text += String.format("Meno: %s\n", osoba.getMeno());
                         text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
@@ -891,7 +891,7 @@ public class GraphicalApp {
                         JOptionPane.showMessageDialog(null, "Test pre tento kod neexistuje", "Test nenajdeny", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-                System.out.println(kodTestu);
+                //System.out.println(kodTestu);
             }
         });
     }

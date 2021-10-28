@@ -2,11 +2,11 @@ package Models;
 
 import universalTree.TreeKey;
 
-public class PCRTestKod implements Comparable<PCRTestKod>, TreeKey<String>  {
+public class PCRTestCode implements Comparable<PCRTestCode>, TreeKey<String>  {
 
     private final PCRTest data;
 
-    public PCRTestKod(PCRTest data) {
+    public PCRTestCode(PCRTest data) {
         this.data = data;
     }
 
@@ -15,7 +15,7 @@ public class PCRTestKod implements Comparable<PCRTestKod>, TreeKey<String>  {
     }
 
     @Override
-    public int compareTo(PCRTestKod o) {
+    public int compareTo(PCRTestCode o) {
         return data.kodTestu.compareTo(o.data.kodTestu);
     }
 
