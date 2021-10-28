@@ -2,6 +2,8 @@ import Models.*;
 import twoThreeTree.TTTree;
 import twoThreeTree.TTTreeNode;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -140,13 +142,29 @@ public class Application {
         return tree.getData();
     }
 
-    public boolean addPCRTest(String kodTestu, String rodCislo, int kodPracoviska, int kodOkresu, int kodKraju, boolean vysledok, String poznamka, Osoba osoba) {
+    public void writeToFile(String fileName) {
+        String str = "Hello";
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+            writer.write(str);
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public void loadFromFile(String fileName) {
+
+    }
+
+    public boolean addPCRTest(String kodTestu, String rodCislo, int kodPracoviska, int kodOkresu, int kodKraju, boolean vysledok, String poznamka, Osoba osoba, Date datum) {
         //Date date = new Date(rok - 1900, mesiac - 1, den);
         //Osoba osoba = getOsoba(rodCislo);
         if (kodTestu == null) {
             kodTestu = UUID.randomUUID().toString();
         }
-        PCRTest pcrTest = new PCRTest(kodTestu, rodCislo, kodPracoviska, kodOkresu, kodKraju, vysledok, poznamka, osoba);
+        PCRTest pcrTest = new PCRTest(kodTestu, rodCislo, kodPracoviska, kodOkresu, kodKraju, vysledok, poznamka, osoba, datum);
         PCRTestCode pcrTestCode = new PCRTestCode(pcrTest);
         PCRTestDate pcrTestDate = new PCRTestDate(pcrTest);
         boolean[] isTestAdd = new boolean[9];
@@ -224,7 +242,6 @@ public class Application {
             return osoba;
         }
         return null;
-
     }
 
     public void addRandomPCRTest(int count) {
@@ -241,7 +258,7 @@ public class Application {
             String kodTestu = "" + random.nextInt(10000);
             kodTestu = null;
             if (osoba != null)
-                this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba);
+                this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba, null);
         }
     }
 

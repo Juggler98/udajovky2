@@ -58,8 +58,8 @@ public class GraphicalApp {
 
         jFrame.add(jPanel);
 
-        app.addRandomPersons(100000);
-        app.addRandomPCRTest(100000);
+        app.addRandomPersons(10000);
+        app.addRandomPCRTest(10000);
 
         addVytvorPCRTestComponents();
         addVyhladajPCRTest();
@@ -70,6 +70,8 @@ public class GraphicalApp {
         addZoradOkresyKraje();
         addVymazOsobu();
         addVymazTest();
+        addSaveButton();
+        addLoadButton();
 
         test();
 
@@ -137,6 +139,39 @@ public class GraphicalApp {
             return TypUzJednotky.PRACOVISKO;
         System.out.println("Error: getTypUzJednotky");
         return null;
+    }
+
+    private void addSaveButton() {
+        JButton jButton = new JButton("Save");
+        jPanel.add(jButton);
+        jButton.setBounds(jFrameWidth - 120, jFrameHeight - 125, 80, 30);
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nazovSuboru = JOptionPane.showInputDialog("Zadaj nazov suboru");
+                if (nazovSuboru != null) {
+                    app.writeToFile(nazovSuboru);
+                }
+            }
+        });
+
+    }
+
+    private void addLoadButton() {
+        JButton jButton = new JButton("Load");
+        jPanel.add(jButton);
+        jButton.setBounds(jFrameWidth - 120, jFrameHeight - 125 + 31, 80, 30);
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nazovSuboru = JOptionPane.showInputDialog("Zadaj nazov suboru");
+                if (nazovSuboru != null) {
+                    app.loadFromFile(nazovSuboru);
+                }
+            }
+        });
     }
 
     private void addVymazTest() {
@@ -910,7 +945,7 @@ public class GraphicalApp {
         JButton jButton = new JButton("Vytvor PCR test");
         jPanel.add(jButton);
 
-        JButton ulozPcrTest = new JButton("Ulozit");
+        JButton ulozPcrTest = new JButton("Uloz");
         jButton.setBounds(posun, posun, componentWidth, componentHeight);
         ulozPcrTest.setBounds(posun, componentHeight * 7 + componentDistance, componentWidth, componentHeight);
 
@@ -997,7 +1032,7 @@ public class GraphicalApp {
                             String priezvisko = JOptionPane.showInputDialog(null, "Zadaj priezvisko novej osoby");
                             osoba = app.addOsoba(meno, priezvisko, rodneCislo.getText());
                         }
-                        if (app.addPCRTest(null, rodneCislo.getText(), Integer.parseInt(kodPracoviska.getText()), Integer.parseInt(kodOkresu.getText()), kodKraju, positive, poznamka.getText(), osoba)) {
+                        if (app.addPCRTest(null, rodneCislo.getText(), Integer.parseInt(kodPracoviska.getText()), Integer.parseInt(kodOkresu.getText()), kodKraju, positive, poznamka.getText(), osoba, null)) {
                             JOptionPane.showMessageDialog(null, "Test bol vytvoreny");
                             novyTest = !novyTest;
                             jPanel.remove(rodneCislo);

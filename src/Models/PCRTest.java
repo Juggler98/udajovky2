@@ -18,8 +18,12 @@ public class PCRTest {
     private String poznamka;
     private final Osoba osoba;
 
-    public PCRTest(String kodTestu, String rodCisloPacienta, int kodPracoviska, int kodOkresu, int kodKraja, boolean vysledok, String poznamka, Osoba osoba) {
-        this.datum = new Date(System.currentTimeMillis());
+    public PCRTest(String kodTestu, String rodCisloPacienta, int kodPracoviska, int kodOkresu, int kodKraja, boolean vysledok, String poznamka, Osoba osoba, Date datum) {
+        if (datum == null) {
+            this.datum = new Date(System.currentTimeMillis());
+        } else {
+            this.datum = datum;
+        }
         this.rodCisloPacienta = rodCisloPacienta;
         this.kodTestu = kodTestu;
         this.kodPracoviska = kodPracoviska;
