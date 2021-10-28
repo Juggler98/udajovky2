@@ -149,28 +149,40 @@ public class Application {
         PCRTest pcrTest = new PCRTest(kodTestu, rodCislo, kodPracoviska, kodOkresu, kodKraju, vysledok, poznamka, osoba);
         PCRTestKod pcrTestCode = new PCRTestKod(pcrTest);
         PCRTestDate pcrTestDate = new PCRTestDate(pcrTest);
-        osoba.getTesty().add(pcrTestDate);
-        boolean pracovisko = getPracovisko(kodPracoviska).getTesty().add(pcrTestDate);
-        boolean kraj = getKraj(kodKraju).getTesty().add(pcrTestDate);
-        boolean okres = getOkres(kodOkresu).getTesty().add(pcrTestDate);
-        boolean okresPozitivne = true;
-        boolean krajPozitivne = true;
-        boolean pracoviskoPozitivne = true;
-        boolean pozitivne = true;
-        if (vysledok) {
-            okresPozitivne = getOkres(kodOkresu).getPozitivneTesty().add(pcrTestDate);
-            krajPozitivne = getKraj(kodKraju).getPozitivneTesty().add(pcrTestDate);
-            pracoviskoPozitivne = getPracovisko(kodPracoviska).getPozitivneTesty().add(pcrTestDate);
-            pozitivne = pcrTreePositive.add(pcrTestDate);
+        boolean[] isTestAdd = new boolean[9];
+        for (int i = 0; i < isTestAdd.length; i++) {
+            isTestAdd[i] = true;
         }
-        return pcrTreeCode.add(pcrTestCode) && pcrTreeDate.add(pcrTestDate) && pracovisko && kraj && okres && pracoviskoPozitivne && krajPozitivne && okresPozitivne && pozitivne;
+        isTestAdd[0] = pcrTreeCode.add(pcrTestCode);
+        if (!isTestAdd[0]) {
+            return false;
+        }
+        isTestAdd[1] = getPracovisko(kodPracoviska).getTesty().add(pcrTestDate);
+        isTestAdd[2] = getKraj(kodKraju).getTesty().add(pcrTestDate);
+        isTestAdd[3] = getOkres(kodOkresu).getTesty().add(pcrTestDate);
+        if (vysledok) {
+            isTestAdd[4] = getOkres(kodOkresu).getPozitivneTesty().add(pcrTestDate);
+            isTestAdd[5] = getKraj(kodKraju).getPozitivneTesty().add(pcrTestDate);
+            isTestAdd[6] = getPracovisko(kodPracoviska).getPozitivneTesty().add(pcrTestDate);
+            isTestAdd[7] = pcrTreePositive.add(pcrTestDate);
+        }
+        isTestAdd[8] = pcrTreeDate.add(pcrTestDate);
+        for (boolean pom : isTestAdd) {
+            if (!pom) {
+                return false;
+            }
+        }
+        osoba.getTesty().add(pcrTestDate);
+        return true;
     }
 
     public Osoba removeOsoba(String rodCislo) {
         Osoba osoba = personTree.remove(rodCislo);
         if (osoba != null) {
-            for (PCRTestDate test : osoba.getTesty()) {
-                if (this.removePCRTest(test.getData().getKodTestu()) == null) {
+            ArrayList<PCRTestDate> testy = osoba.getTesty();
+            for (int i = 0; i < testy.size(); i++) {
+                PCRTestDate test = testy.get(i);
+                if (this.removePCRTest(test.getData().getKodTestu(), false) == null) {
                     return null;
                 }
             }
@@ -179,8 +191,11 @@ public class Application {
         return null;
     }
 
-    public PCRTest removePCRTest(String kodTestu) {
+    public PCRTest removePCRTest(String kodTestu, boolean onlyTest) {
         PCRTestKod test = pcrTreeCode.remove(kodTestu);
+        if (test == null) {
+            return null;
+        }
         PCRTestDate testDate = new PCRTestDate(test.getData());
         if (test.getData().isVysledok()) {
             getPracovisko(test.getData().getKodPracoviska()).getPozitivneTesty().removeData(testDate);
@@ -192,13 +207,15 @@ public class Application {
         getOkres(test.getData().getKodOkresu()).getTesty().removeData(testDate);
         getKraj(test.getData().getKodKraja()).getTesty().removeData(testDate);
         pcrTreeDate.removeData(testDate);
-        ArrayList<PCRTestDate> testyOsoby = test.getData().getOsoba().getTesty();
-        for (int i = 0; i < testyOsoby.size(); i++) {
-            PCRTestDate pcrTestDate = testyOsoby.get(i);
-            if (pcrTestDate.compareTo(testDate) == 0) {
-                testyOsoby.remove(i);
-                System.out.println("Deleted index: " + i);
-                break;
+        if (onlyTest) {
+            ArrayList<PCRTestDate> testyOsoby = test.getData().getOsoba().getTesty();
+            for (int i = 0; i < testyOsoby.size(); i++) {
+                PCRTestDate pcrTestDate = testyOsoby.get(i);
+                if (pcrTestDate.compareTo(testDate) == 0) {
+                    testyOsoby.remove(i);
+                    System.out.println("Deleted index: " + i);
+                    break;
+                }
             }
         }
         return test.getData();
@@ -229,9 +246,9 @@ public class Application {
             if (osoba == null) {
                 osoba = randomOsoby.get(random.nextInt(randomOsoby.size()));
             }
-            String kodTestu = "" + random.nextInt(1000);
+            //String kodTestu = "" + random.nextInt(100000);
             if (osoba != null)
-                this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba);
+                this.addPCRTest(null, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba);
         }
     }
 

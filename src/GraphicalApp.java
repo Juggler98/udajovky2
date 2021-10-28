@@ -11,7 +11,12 @@ public class GraphicalApp {
 
     private final JFrame jFrame = new JFrame("PCR Testy");
     private final JPanel jPanel = new JPanel();
+    private final JTextArea jTextArea = new JTextArea();
+    private final JScrollPane jScrollPane = new JScrollPane(jTextArea);
+
     private final Application app = new Application();
+    private final int jFrameWidth = 1600;
+    private final int jFrameHeight = 800;
     private final int componentHeight = 40;
     private final int componentWidth = 170;
     private final int componentDistance = 12;
@@ -21,23 +26,35 @@ public class GraphicalApp {
     private boolean novyTest = false;
     private boolean hladajPozitivneOsoby = false;
     private boolean hladajTestyPrePracovisko = false;
+    private boolean zoradOkresyKraje = false;
     private boolean novaOsoba = false;
 
     private final String[] typy = {"Všetky uzemne jednotky", "Okres", "Kraj", "Pracovisko"};
     private final String[] pozitivne = {"Všetky vysledky testov", "Pozitivne"};
     private final String[] okresyKraje = {"Okresy", "Kraje"};
-    private TypUzJednotky typUzJednotky;
+    private TypUzJednotky typUzJednotkyZorad;
+    private TypUzJednotky typUzJednotkyOsoby;
+    private TypUzJednotky typUzJednotkyTesty;
     private TypVysledokTestu typVysledokTestu;
 
 
     public GraphicalApp() {
         jFrame.setVisible(true);
-        jFrame.setSize(1600, 800);
+        jFrame.setSize(jFrameWidth, jFrameHeight);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setLayout(null);
 
         jPanel.setLayout(null);
-        jPanel.setBounds(0, 0, 1600, 800);
+        jPanel.setBounds(0, 0, jFrameWidth, jFrameHeight);
+
+        int width = 550;
+        int y = 300;
+        jTextArea.setBounds((jFrameWidth / 2) - (width / 2), y, width, jFrameHeight - y - 52);
+        jTextArea.setEditable(false);
+
+
+        jScrollPane.setBounds((jFrameWidth / 2) - (width / 2), y, width, jFrameHeight - y - 52);
+        jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         jFrame.add(jPanel);
 
@@ -54,7 +71,7 @@ public class GraphicalApp {
         addVymazOsobu();
         addVymazTest();
 
-        test();
+        //test();
 
 //        ArrayList<Osoba> interval = app.getIntervalOsoba("550000123456", "6000001234");
 //        for (Osoba o : interval) {
@@ -134,7 +151,7 @@ public class GraphicalApp {
             public void actionPerformed(ActionEvent e) {
                 String kodTestu = JOptionPane.showInputDialog("Zadaj kod testu");
                 if (kodTestu != null) {
-                    PCRTest test = app.removePCRTest(kodTestu);
+                    PCRTest test = app.removePCRTest(kodTestu, true);
                     if (test != null) {
                         Okres okres = app.getOkres(test.getKodOkresu());
                         Pracovisko pracovisko = app.getPracovisko(test.getKodPracoviska());
@@ -164,9 +181,13 @@ public class GraphicalApp {
                         } else {
                             text += "Dalsie udaje neexistuju\n";
                         }
-                        JOptionPane.showMessageDialog(null, text, "Osoba vymazana", JOptionPane.INFORMATION_MESSAGE);
+                        jTextArea.setText(text);
+                        jTextArea.setCaretPosition(0);
+
+                        jPanel.add(jScrollPane);
+                        //JOptionPane.showMessageDialog(null, text, "Test vymazany", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        String text = String.format("Test s kodom %s sa nepodarilo vymazat.\nSkontrolujte ci test existuje.", kodTestu);
+                        String text = String.format("Test s kodom \"%s\" sa nepodarilo vymazat.\nSkontrolujte ci test existuje.", kodTestu);
                         JOptionPane.showMessageDialog(null, text);
                     }
                 }
@@ -191,7 +212,7 @@ public class GraphicalApp {
                         String text = String.format("Meno: %s\nPriezvisko: %s\nRod. cislo: %s", osoba.getMeno(), osoba.getPriezvisko(), osoba.getRodCislo());
                         JOptionPane.showMessageDialog(null, text, "Osoba vymazana", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        String text = String.format("Osobu s rod. cislom %s sa nepodarilo vymazat.\nSkontrolujte ci osoba existuje.", rodCislo);
+                        String text = String.format("Osobu s rod. cislom \"%s\" sa nepodarilo vymazat.\nSkontrolujte ci osoba existuje.", rodCislo);
                         JOptionPane.showMessageDialog(null, text);
                     }
                 }
@@ -226,12 +247,12 @@ public class GraphicalApp {
         date.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance + 28, componentWidth, componentHeight);
         x.setBounds(posun + componentWidth * posunX, componentHeight * 2 + componentDistance + 28, componentWidth, componentHeight);
 
-        typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+        typUzJednotkyZorad = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
 
         comboBoxUzJednotky.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+                typUzJednotkyZorad = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
             }
         });
 
@@ -239,8 +260,8 @@ public class GraphicalApp {
         jButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                hladajPozitivneOsoby = !hladajPozitivneOsoby;
-                if (hladajPozitivneOsoby) {
+                zoradOkresyKraje = !zoradOkresyKraje;
+                if (zoradOkresyKraje) {
                     jPanel.add(date);
                     jPanel.add(x);
                     jPanel.add(zobraz);
@@ -301,7 +322,7 @@ public class GraphicalApp {
                         TTTree<Integer, UzemnaJednotka> uzemneJednotky = new TTTree<>();
                         ArrayList<UzemnaJednotka> sortedUzemneJednotky = new ArrayList<>();
                         String text = "";
-                        if (typUzJednotky == TypUzJednotky.OKRES) {
+                        if (typUzJednotkyZorad == TypUzJednotky.OKRES) {
                             for (Integer okresCode : app.getOkresCodes()) {
                                 Okres okres = app.getOkres(okresCode);
                                 OkresPocetPozitivnych okresPocetPozitivnych = new OkresPocetPozitivnych(okres.getKod(), okres.getNazov());
@@ -309,7 +330,7 @@ public class GraphicalApp {
                                 uzemneJednotky.add(okresPocetPozitivnych);
                             }
                             text = "Okresy\n";
-                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                        } else if (typUzJednotkyZorad == TypUzJednotky.KRAJ) {
                             for (Integer krajeCodes : app.getKrajCodes()) {
                                 Kraj kraj = app.getKraj(krajeCodes);
                                 KrajPocetPozitivnych krajPocetPozitivnych = new KrajPocetPozitivnych(kraj.getKod(), kraj.getNazov());
@@ -327,13 +348,13 @@ public class GraphicalApp {
                         }
                         for (int i = sortedUzemneJednotky.size() - 1; i >= 0; i--) {
                             UzemnaJednotka uzemnaJednotka = sortedUzemneJednotky.get(i);
-                            if (typUzJednotky == TypUzJednotky.OKRES) {
+                            if (typUzJednotkyZorad == TypUzJednotky.OKRES) {
                                 OkresPocetPozitivnych okresPocetPozitivnych = (OkresPocetPozitivnych) uzemnaJednotka;
                                 text += "----------------------------------";
                                 text += String.format("\nOkres %d\n", index++);
                                 text += String.format("Nazov: %s\n", okresPocetPozitivnych.getNazov());
                                 text += String.format("Pocet pozitivnych: %d\n", okresPocetPozitivnych.getPocetPozitivnych());
-                            } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                            } else if (typUzJednotkyZorad == TypUzJednotky.KRAJ) {
                                 KrajPocetPozitivnych krajPocetPozitivnych = (KrajPocetPozitivnych) uzemnaJednotka;
                                 text += "----------------------------------";
                                 text += String.format("\nKraj %d\n", index++);
@@ -341,7 +362,11 @@ public class GraphicalApp {
                                 text += String.format("Pocet pozitivnych: %d\n", krajPocetPozitivnych.getPocetPozitivnych());
                             }
                         }
-                        JOptionPane.showMessageDialog(null, text, "Uzemne jednotky", JOptionPane.INFORMATION_MESSAGE);
+                        jTextArea.setText(text);
+                        jTextArea.setCaretPosition(0);
+
+                        jPanel.add(jScrollPane);
+                        //JOptionPane.showMessageDialog(null, text, "Uzemne jednotky", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "Pocet dni musi byt v rozmedzi 1-28");
                     }
@@ -384,13 +409,13 @@ public class GraphicalApp {
         x.setBounds(posun + componentWidth * posunX, componentHeight * 2 + componentDistance + 28, componentWidth, componentHeight);
         kodUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 28, componentWidth, componentHeight);
 
-        typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+        typUzJednotkyOsoby = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
 
         comboBoxUzJednotky.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
-                if (typUzJednotky != TypUzJednotky.VSETKY) {
+                typUzJednotkyOsoby = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+                if (typUzJednotkyOsoby != TypUzJednotky.VSETKY) {
                     jPanel.add(kodUzJednotky);
                     zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 4 + componentDistance + 26, componentWidth, componentHeight);
                     kodUzJednotky.setToolTipText(comboBoxUzJednotky.getSelectedItem().toString());
@@ -412,6 +437,9 @@ public class GraphicalApp {
                     jPanel.add(x);
                     jPanel.add(zobraz);
                     jPanel.add(comboBoxUzJednotky);
+                    if (typUzJednotkyOsoby != TypUzJednotky.VSETKY) {
+                        jPanel.add(kodUzJednotky);
+                    }
                 } else {
                     jPanel.remove(date);
                     jPanel.remove(x);
@@ -468,13 +496,13 @@ public class GraphicalApp {
 
                         ArrayList<PCRTestDate> testy = new ArrayList<>();
 
-                        if (typUzJednotky == TypUzJednotky.VSETKY) {
+                        if (typUzJednotkyOsoby == TypUzJednotky.VSETKY) {
                             testy = app.getDateIntervalTest(app.getPcrTreePositive(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.PRACOVISKO) {
+                        } else if (typUzJednotkyOsoby == TypUzJednotky.PRACOVISKO) {
                             testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.OKRES) {
+                        } else if (typUzJednotkyOsoby == TypUzJednotky.OKRES) {
                             testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                        } else if (typUzJednotkyOsoby == TypUzJednotky.KRAJ) {
                             testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
                         }
 
@@ -514,11 +542,13 @@ public class GraphicalApp {
                                 text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
                             }
                         }
-                        JTextPane jTextPane = new JTextPane();
-                        jTextPane.setText(text);
-                        jTextPane.setBounds(10, 500, 500, 500);
-                        jPanel.add(jTextPane);
-                        JOptionPane.showMessageDialog(null, text, "Pozitivne osoby", JOptionPane.INFORMATION_MESSAGE);
+
+                        jTextArea.setText(text);
+                        jTextArea.setCaretPosition(0);
+
+                        jPanel.add(jScrollPane);
+
+                        //JOptionPane.showMessageDialog(null, text, "Pozitivne osoby", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "Pocet dni musi byt v rozmedzi 1-28");
                     }
@@ -565,15 +595,15 @@ public class GraphicalApp {
         endDate.setBounds(posun + componentWidth * posunX, componentHeight * 2 + componentDistance + 26 * 2 + 2, componentWidth, componentHeight);
         kodUzJednotky.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 26 * 2 + 2, componentWidth, componentHeight);
 
-        typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+        typUzJednotkyTesty = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
         typVysledokTestu = getTypVysledkuTestu(comboBoxPozitivne.getSelectedItem().toString());
 
         comboBoxUzJednotky.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                typUzJednotky = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
+                typUzJednotkyTesty = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
                 typVysledokTestu = getTypVysledkuTestu(comboBoxPozitivne.getSelectedItem().toString());
-                if (typUzJednotky != TypUzJednotky.VSETKY) {
+                if (typUzJednotkyTesty != TypUzJednotky.VSETKY) {
                     jPanel.add(kodUzJednotky);
                     zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 4 + componentDistance + 26 * 2, componentWidth, componentHeight);
                     kodUzJednotky.setToolTipText(comboBoxUzJednotky.getSelectedItem().toString());
@@ -596,6 +626,9 @@ public class GraphicalApp {
                     jPanel.add(zobraz);
                     jPanel.add(comboBoxUzJednotky);
                     jPanel.add(comboBoxPozitivne);
+                    if (typUzJednotkyTesty != TypUzJednotky.VSETKY) {
+                        jPanel.add(kodUzJednotky);
+                    }
                 } else {
                     jPanel.remove(startDate);
                     jPanel.remove(endDate);
@@ -626,23 +659,23 @@ public class GraphicalApp {
                     ArrayList<PCRTestDate> testy = new ArrayList<>();
 
                     if (typVysledokTestu == TypVysledokTestu.VSETKY) {
-                        if (typUzJednotky == TypUzJednotky.VSETKY) {
+                        if (typUzJednotkyTesty == TypUzJednotky.VSETKY) {
                             testy = app.getDateIntervalTest(app.getPcrTreeDate(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.PRACOVISKO) {
+                        } else if (typUzJednotkyTesty == TypUzJednotky.PRACOVISKO) {
                             testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.OKRES) {
+                        } else if (typUzJednotkyTesty == TypUzJednotky.OKRES) {
                             testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                        } else if (typUzJednotkyTesty == TypUzJednotky.KRAJ) {
                             testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
                         }
                     } else if (typVysledokTestu == TypVysledokTestu.POZITIVNE) {
-                        if (typUzJednotky == TypUzJednotky.VSETKY) {
+                        if (typUzJednotkyTesty == TypUzJednotky.VSETKY) {
                             testy = app.getDateIntervalTest(app.getPcrTreePositive(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.PRACOVISKO) {
+                        } else if (typUzJednotkyTesty == TypUzJednotky.PRACOVISKO) {
                             testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.OKRES) {
+                        } else if (typUzJednotkyTesty == TypUzJednotky.OKRES) {
                             testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
-                        } else if (typUzJednotky == TypUzJednotky.KRAJ) {
+                        } else if (typUzJednotkyTesty == TypUzJednotky.KRAJ) {
                             testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
                         }
                     }
@@ -680,8 +713,12 @@ public class GraphicalApp {
                             text += "Dalsie udaje neexistuju\n";
                         }
                     }
-                    JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
 
+                    jTextArea.setText(text);
+                    jTextArea.setCaretPosition(0);
+
+                    jPanel.add(jScrollPane);
+                    //JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "Zadaj datum vo formate DD.MM.YYYY");
                 }
