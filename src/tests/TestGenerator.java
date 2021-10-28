@@ -29,7 +29,7 @@ public class TestGenerator {
         Random random1 = new Random();
         for (int j = 0; j < testCount; j++) {
             System.out.println("--------------------------NEW-TEST-------------------------------------");
-            int operationCount = 100;
+            int operationCount = 10000;
             int addCount = 0;
             int removeCount = 0;
             int addNotPossible = 0;
@@ -41,16 +41,16 @@ public class TestGenerator {
 
             boolean goRandom = true;
 
+            TestClass[] testNumbers = new TestClass[20];
             if (!goRandom) {
-                TestClass[] testNumbers = new TestClass[20];
                 for (int i = 0; i < testNumbers.length; i++) {
                     testNumbers[i] = new TestClass(i);
                 }
             }
 
-            int addPercentage = 70;
+            int addPercentage = 99;
             int removePercentage = 100 - addPercentage;
-            int randomNumberBound = 10;
+            int randomNumberBound = 100;
             if (goRandom) {
                 for (int i = 0; i < operationCount; i++) {
                     if (i % 10000 == 0) {
@@ -59,7 +59,7 @@ public class TestGenerator {
                     TestClass testClass = new TestClass((Integer) random.nextInt(randomNumberBound));
                     int randomOperation = random1.nextInt(100);
                     if (randomOperation < addPercentage) {
-                        //System.out.println("ADD: " + pom.getKluc());
+                        System.out.println("ADD: " + testClass.getKluc());
                         addCount++;
                         boolean treeNotAdd = testTree.add(testClass);
                         if (!treeNotAdd) {
@@ -77,7 +77,7 @@ public class TestGenerator {
                         if (testTree.getSize() > 0) {
                             removeCount++;
                             int keyToDelete = testArrayList.get(random.nextInt(testArrayList.size()));
-                            //System.out.println("Remove: " + keyToDelete);
+                            System.out.println("Remove: " + keyToDelete);
                             if (testTree.remove(keyToDelete) == null) {
                                 removeNotPossible++;
                             }
@@ -134,6 +134,18 @@ public class TestGenerator {
             System.out.println("Tree size: " + testTree.getSize());
             System.out.println("ArrayList size " + testArrayList.size());
             System.out.println("Tree height: " + testTree.getHeight());
+
+            System.out.println("Inorder vsetky hodnoty:");
+            ArrayList<TestClass> hodnoty = testTree.getInOrderData();
+            for (TestClass testClass : hodnoty) {
+                System.out.println(testClass.getKey());
+            }
+            System.out.println("Inorder interval:");
+            ArrayList<TestClass> hodnotyInterval = testTree.getIntervalData(50, 55);
+            for (TestClass testClass : hodnotyInterval) {
+                System.out.println(testClass.getKey());
+            }
+
         }
     }
 

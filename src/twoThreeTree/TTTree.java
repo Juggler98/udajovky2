@@ -148,7 +148,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
     public ArrayList<T> getIntervalData(K start, K end) {
         TTTreeNode<K, T> leaf = (TTTreeNode<K, T>) this.root;
         if (leaf == null) {
-            return null;
+            return getInOrderDataInterval(leaf, start, end, true);
         }
         while (true) {
             if (leaf.isThreeNode()) {
@@ -200,13 +200,13 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
             }
             leaf = leaf.getParent();
         }
-        return getInOrderDataInterval(leaf,start, end, left);
+        return getInOrderDataInterval(leaf, start, end, left);
     }
 
-    private ArrayList<T> getInOrderDataInterval(TTTreeNode<K, T> node,K start, K end, boolean left) {
+    private ArrayList<T> getInOrderDataInterval(TTTreeNode<K, T> node, K start, K end, boolean left) {
         ArrayList<T> data = new ArrayList<>();
         if (node == null) {
-            return null;
+            return data;
         }
         TTTreeNode<K, T> current = node;
         T actualData;
@@ -251,6 +251,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
                 if (current.isThreeNode()) {
                     if (actualData.compareTo(current.getDataL()) < 0) {
                         actualData = current.getDataL();
+                        if (actualData.getKey().compareTo(end) > 0) {
+                            current = null;
+                            break;
+                        }
                         data.add(actualData);
                         current = current.getMiddleSon();
                         isParent = false;
@@ -259,6 +263,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
                         isParent = true;
                     } else {
                         actualData = current.getDataR();
+                        if (actualData.getKey().compareTo(end) > 0) {
+                            current = null;
+                            break;
+                        }
                         data.add(actualData);
                         current = current.getRightSon();
                         isParent = false;
@@ -266,6 +274,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
                 } else {
                     if (actualData.compareTo(current.getDataL()) < 0) {
                         actualData = current.getDataL();
+                        if (actualData.getKey().compareTo(end) > 0) {
+                            current = null;
+                            break;
+                        }
                         data.add(actualData);
                         current = current.getRightSon();
                         isParent = false;
@@ -283,7 +295,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         TTTreeNode<K, T> current = (TTTreeNode<K, T>) this.root;
         ArrayList<T> data = new ArrayList<>();
         if (current == null) {
-            return null;
+            return data;
         }
         T actualData;
         boolean isParent;
@@ -451,8 +463,14 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
                 }
             }
         }
-        if (data.compareTo(leaf.getDataL()) != 0 || (leaf.isThreeNode() && data.compareTo(leaf.getDataR()) != 0)) {
-            return leaf;
+        if (leaf.isThreeNode()) {
+            if (data.compareTo(leaf.getDataL()) != 0 && data.compareTo(leaf.getDataR()) != 0) {
+                return leaf;
+            }
+        } else {
+            if (data.compareTo(leaf.getDataL()) != 0) {
+                return leaf;
+            }
         }
         return null;
     }
