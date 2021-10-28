@@ -181,11 +181,11 @@ public class GraphicalApp {
                         } else {
                             text += "Dalsie udaje neexistuju\n";
                         }
-                        jTextArea.setText(text);
-                        jTextArea.setCaretPosition(0);
-
-                        jPanel.add(jScrollPane);
-                        //JOptionPane.showMessageDialog(null, text, "Test vymazany", JOptionPane.INFORMATION_MESSAGE);
+                        //text = "Test vymazany\n" + text;
+                        //jTextArea.setText(text);
+//                        jTextArea.setCaretPosition(0);
+//                        jPanel.add(jScrollPane);
+                        JOptionPane.showMessageDialog(null, text, "Test vymazany", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         String text = String.format("Test s kodom \"%s\" sa nepodarilo vymazat.\nSkontrolujte ci test existuje.", kodTestu);
                         JOptionPane.showMessageDialog(null, text);
@@ -241,7 +241,8 @@ public class GraphicalApp {
         date.setToolTipText("Zaciatocny datum");
         x.setToolTipText("Pocet dni (X)");
 
-        date.setText("28.10.2021");
+        Date actualDate = new Date(System.currentTimeMillis());
+        date.setText(actualDate.getDate() + 1 + ".10.2021");
         x.setText("5");
 
         date.setBounds(posun + componentWidth * posunX, componentHeight + componentDistance + 28, componentWidth, componentHeight);
@@ -401,7 +402,8 @@ public class GraphicalApp {
         date.setToolTipText("Zaciatocny datum");
         x.setToolTipText("Pocet dni (X)");
 
-        date.setText("28.10.2021");
+        Date actualDate = new Date(System.currentTimeMillis());
+        date.setText(actualDate.getDate() + 1 + ".10.2021");
         x.setText("5");
         kodUzJednotky.setText("205");
 
@@ -680,12 +682,13 @@ public class GraphicalApp {
                         }
                     }
 
-                    String text = "PCR testy";
+                    String text = "PCR testy\n";
                     int index = 1;
                     for (PCRTestDate test : testy) {
                         Okres okres = app.getOkres(test.getData().getKodOkresu());
                         Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
-                        text += String.format("\n\nTest %d\n", index++);
+                        text += "----------------------------------";
+                        text += String.format("\nTest %d\n", index++);
                         text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
                         text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
                         text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
@@ -809,16 +812,20 @@ public class GraphicalApp {
                 if (rodCislo != null) {
                     Osoba osoba = app.getOsoba(rodCislo);
                     if (osoba != null) {
-                        ArrayList<PCRTestDate> testy = app.getDateIntervalTest(osoba.getTesty(), new Date(0,0,0), new Date(Integer.MAX_VALUE, 11, 31));
+                        ArrayList<PCRTestDate> testy = app.getDateIntervalTest(osoba.getTesty(), new Date(0, 0, 0), new Date(10000, 11, 31));
                         String text = String.format("Rodne cislo: %s\n", osoba.getRodCislo());
                         text += String.format("Meno: %s\n", osoba.getMeno());
                         text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());
                         text += String.format("Datum Narodenia: %s\n", osoba.getDatumNarodenia().getDate() + "." + (osoba.getDatumNarodenia().getMonth() + 1) + "." + (1900 + osoba.getDatumNarodenia().getYear()));
                         int index = 1;
+                        if (testy.size() == 0) {
+                            text += "\nZiadne testy";
+                        }
                         for (PCRTestDate test : testy) {
                             Okres okres = app.getOkres(test.getData().getKodOkresu());
                             Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
-                            text += String.format("\n\nTest %d\n", index++);
+                            text += "----------------------------------";
+                            text += String.format("\nTest %d\n", index++);
                             text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
                             text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
                             text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
@@ -836,7 +843,10 @@ public class GraphicalApp {
                                 text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
                             }
                         }
-                        JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
+                        jTextArea.setText(text);
+                        jTextArea.setCaretPosition(0);
+                        jPanel.add(jScrollPane);
+                        //JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(null, "Osoba neexistuje", "Osoba nenajdena", JOptionPane.ERROR_MESSAGE);
                     }

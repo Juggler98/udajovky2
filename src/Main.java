@@ -23,6 +23,11 @@ public class Main {
         //System.out.println(okres.getNazov());
         //System.out.println(app.getKrajName(okres.getKodKraja()));
 
+        int p = Integer.MAX_VALUE / 2;
+        System.out.println(p);
+
+        System.out.println(new Date(0, 0, 1));
+        System.out.println(new Date(-10000, 11, 31));
         new GraphicalApp();
 
         //TestGenerator test = new TestGenerator();

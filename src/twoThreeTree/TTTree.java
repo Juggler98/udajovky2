@@ -191,7 +191,7 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
             }
         }
         if (node.isThreeNode()) {
-            if (!(start.compareTo(node.getDataL().getKey()) < 0 && end.compareTo(node.getDataR().getKey()) < 0 || start.compareTo(node.getDataL().getKey()) > 0 && end.compareTo(node.getDataR().getKey()) > 0)) {
+            if (!((start.compareTo(node.getDataL().getKey()) < 0 && end.compareTo(node.getDataR().getKey()) < 0) || (start.compareTo(node.getDataL().getKey()) > 0 && end.compareTo(node.getDataR().getKey()) > 0))) {
                 setInterval(node.getMiddleSon(), start, end);
             }
             if (start.compareTo(node.getDataR().getKey()) > 0 || end.compareTo(node.getDataR().getKey()) > 0) {

@@ -179,7 +179,7 @@ public class Application {
     public Osoba removeOsoba(String rodCislo) {
         Osoba osoba = personTree.remove(rodCislo);
         if (osoba != null) {
-            ArrayList<PCRTestDate> testy = this.getDateIntervalTest(osoba.getTesty(), new Date(0,0,0), new Date(Integer.MAX_VALUE, 11, 31));
+            ArrayList<PCRTestDate> testy = this.getDateIntervalTest(osoba.getTesty(), new Date(0, 0, 0), new Date(10000, 11, 31));
             for (int i = 0; i < testy.size(); i++) {
                 PCRTestDate test = testy.get(i);
                 if (this.removePCRTest(test.getData().getKodTestu(), false) == null) {
@@ -239,7 +239,7 @@ public class Application {
                 osoba = randomOsoby.get(random.nextInt(randomOsoby.size()));
             }
             String kodTestu = "" + random.nextInt(10000);
-            //kodTestu = null;
+            kodTestu = null;
             if (osoba != null)
                 this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba);
         }
