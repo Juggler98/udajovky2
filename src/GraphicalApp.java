@@ -58,8 +58,8 @@ public class GraphicalApp {
 
         jFrame.add(jPanel);
 
-        app.addRandomPersons(10000);
-        app.addRandomPCRTest(10000);
+        app.addRandomPersons(100000);
+        app.addRandomPCRTest(100000);
 
         addVytvorPCRTestComponents();
         addVyhladajPCRTest();
@@ -85,26 +85,28 @@ public class GraphicalApp {
     }
 
     private void test() {
-        ArrayList<PCRTestDate> arrayList = app.getDateIntervalTest(app.getOkres(205).getPozitivneTesty(), new Date(98, 10, 5), new Date(122, 10, 5));
-        for (int i = 0; i < arrayList.size(); i++) {
-            System.out.println("positive: " + arrayList.get(i).getData().getRodCisloPacienta());
-            System.out.println("date: " + arrayList.get(i).getData().getDatum());
-        }
-        System.out.println(app.getOkres(105).getTesty().getSize());
-        System.out.println(app.getOkres(105).getPozitivneTesty().getSize());
+//        ArrayList<PCRTestDate> arrayList = app.getDateIntervalTest(app.getOkres(205).getPozitivneTesty(), new Date(98, 10, 5), new Date(122, 10, 5));
+//
+//        for (int i = 0; i < arrayList.size(); i++) {
+//            System.out.println("positive: " + arrayList.get(i).getData().getRodCisloPacienta());
+//            System.out.println("date: " + arrayList.get(i).getData().getDatum());
+//        }
+//        System.out.println(app.getOkres(105).getTesty().getSize());
+//        System.out.println(app.getOkres(105).getPozitivneTesty().getSize());
 
-        JButton[] buttons = new JButton[15];
-        for (int i = 0; i < buttons.length; i++) {
-            if (i != 10 && i != 12) {
-                buttons[i] = new JButton("");
-                jPanel.add(buttons[i]);
-                if (i > 5) {
-                    // buttons[i].setBounds(posun + componentWidth * (i - 6), posun + 370, componentWidth, componentHeight);
-                } else {
-                    //buttons[i].setBounds(posun + componentWidth * (3 + i), posun, componentWidth, componentHeight);
-                }
-            }
-        }
+        //ArrayList<Osoba> arrayList2 = app.getIntervalOsoba2("0", "999999999999999");
+        //ArrayList<Osoba> arrayList2 = app.getIntervalOsoba("0", "999999999999999");
+        //for (int i = 0; i < arrayList2.size(); i++) {
+        // System.out.println("Person: " + arrayList2.get(i).getRodCislo());
+        //}
+        //System.out.println(arrayList2.size());
+
+
+//        ArrayList<Osoba> arrayList3 = app.getIntervalOsoba3("7805051234", "8005051234");
+//        for (int i = 0; i < arrayList3.size(); i++) {
+//            System.out.println("Person: " + arrayList3.get(i).getRodCislo());
+//        }
+//        System.out.println(arrayList3.size());
     }
 
     private enum TypUzJednotky {
@@ -362,7 +364,7 @@ public class GraphicalApp {
                             for (Integer okresCode : app.getOkresCodes()) {
                                 Okres okres = app.getOkres(okresCode);
                                 OkresPocetPozitivnych okresPocetPozitivnych = new OkresPocetPozitivnych(okres.getKod(), okres.getNazov());
-                                okresPocetPozitivnych.setPocetPozitivnych(app.getDateIntervalTest(okres.getPozitivneTesty(), startDate, endDate).size());
+                                okresPocetPozitivnych.setPocetPozitivnych(okres.getPozitivneTesty().getIntervalData(startDate, endDate).size());
                                 uzemneJednotky.add(okresPocetPozitivnych);
                             }
                             text = "Okresy\n";
@@ -370,13 +372,13 @@ public class GraphicalApp {
                             for (Integer krajeCodes : app.getKrajCodes()) {
                                 Kraj kraj = app.getKraj(krajeCodes);
                                 KrajPocetPozitivnych krajPocetPozitivnych = new KrajPocetPozitivnych(kraj.getKod(), kraj.getNazov());
-                                krajPocetPozitivnych.setPocetPozitivnych(app.getDateIntervalTest(kraj.getPozitivneTesty(), startDate, endDate).size());
+                                krajPocetPozitivnych.setPocetPozitivnych(kraj.getPozitivneTesty().getIntervalData(startDate, endDate).size());
                                 uzemneJednotky.add(krajPocetPozitivnych);
                             }
                             text = "Kraje\n";
                         }
 
-                        sortedUzemneJednotky = app.getUzemneJednotkySorted(uzemneJednotky);
+                        sortedUzemneJednotky = uzemneJednotky.getInOrderData();
 
                         int index = 1;
                         if (sortedUzemneJednotky.size() == 0) {
@@ -534,25 +536,24 @@ public class GraphicalApp {
                         ArrayList<PCRTestDate> testy = new ArrayList<>();
 
                         if (typUzJednotkyOsoby == TypUzJednotky.VSETKY) {
-                            testy = app.getDateIntervalTest(app.getPcrTreePositive(), startDate, endDate);
+                            testy = app.getPcrTreePositive().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyOsoby == TypUzJednotky.PRACOVISKO) {
-                            testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                            testy = app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyOsoby == TypUzJednotky.OKRES) {
-                            testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                            testy = app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyOsoby == TypUzJednotky.KRAJ) {
-                            testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                            testy = app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty().getIntervalData(startDate, endDate);
                         }
 
-                        String text = "Osoby\n";
+                        String[] textArray = new String[testy.size()];
+                        String text;
                         int index = 1;
-                        if (testy.size() == 0) {
-                            text = "Ziadne osoby";
-                        }
                         for (PCRTestDate test : testy) {
+                            text = "";
                             Okres okres = app.getOkres(test.getData().getKodOkresu());
                             Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
                             text += "----------------------------------";
-                            text += String.format("\nOsoba %d\n", index++);
+                            text += String.format("\nOsoba %d\n", index);
                             text += String.format("Rodne cislo: %s\n", test.getData().getRodCisloPacienta());
                             Osoba osoba = test.getData().getOsoba();
                             if (osoba != null) {
@@ -578,11 +579,18 @@ public class GraphicalApp {
                             if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
                                 text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
                             }
+                            textArray[index-1] = text;
+                            index++;
                         }
 
-                        jTextArea.setText(text);
+                        jTextArea.setText("Osoby\nPocet: " + testy.size() + "\n");
+                        if (testy.size() == 0) {
+                            jTextArea.setText("Ziadne osoby");
+                        }
+                        for (String str : textArray) {
+                            jTextArea.append(str);
+                        }
                         jTextArea.setCaretPosition(0);
-
                         jPanel.add(jScrollPane);
 
                         //JOptionPane.showMessageDialog(null, text, "Pozitivne osoby", JOptionPane.INFORMATION_MESSAGE);
@@ -639,7 +647,6 @@ public class GraphicalApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 typUzJednotkyTesty = getTypUzJednotky(comboBoxUzJednotky.getSelectedItem().toString());
-                typVysledokTestu = getTypVysledkuTestu(comboBoxPozitivne.getSelectedItem().toString());
                 if (typUzJednotkyTesty != TypUzJednotky.VSETKY) {
                     jPanel.add(kodUzJednotky);
                     zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 4 + componentDistance + 26 * 2, componentWidth, componentHeight);
@@ -649,6 +656,13 @@ public class GraphicalApp {
                     zobraz.setBounds(posun + componentWidth * posunX, componentHeight * 3 + componentDistance + 26 * 2, componentWidth, componentHeight);
                 }
                 jPanel.repaint();
+            }
+        });
+
+        comboBoxPozitivne.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typVysledokTestu = getTypVysledkuTestu(comboBoxPozitivne.getSelectedItem().toString());
             }
         });
 
@@ -697,33 +711,35 @@ public class GraphicalApp {
 
                     if (typVysledokTestu == TypVysledokTestu.VSETKY) {
                         if (typUzJednotkyTesty == TypUzJednotky.VSETKY) {
-                            testy = app.getDateIntervalTest(app.getPcrTreeDate(), startDate, endDate);
+                            testy = app.getPcrTreeDate().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyTesty == TypUzJednotky.PRACOVISKO) {
-                            testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
+                            testy = app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getTesty().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyTesty == TypUzJednotky.OKRES) {
-                            testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
+                            testy = app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getTesty().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyTesty == TypUzJednotky.KRAJ) {
-                            testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getTesty(), startDate, endDate);
+                            testy = app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getTesty().getIntervalData(startDate, endDate);
                         }
                     } else if (typVysledokTestu == TypVysledokTestu.POZITIVNE) {
                         if (typUzJednotkyTesty == TypUzJednotky.VSETKY) {
-                            testy = app.getDateIntervalTest(app.getPcrTreePositive(), startDate, endDate);
+                            testy = app.getPcrTreePositive().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyTesty == TypUzJednotky.PRACOVISKO) {
-                            testy = app.getDateIntervalTest(app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                            testy = app.getPracovisko(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyTesty == TypUzJednotky.OKRES) {
-                            testy = app.getDateIntervalTest(app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                            testy = app.getOkres(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty().getIntervalData(startDate, endDate);
                         } else if (typUzJednotkyTesty == TypUzJednotky.KRAJ) {
-                            testy = app.getDateIntervalTest(app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty(), startDate, endDate);
+                            testy = app.getKraj(Integer.parseInt(kodUzJednotky.getText())).getPozitivneTesty().getIntervalData(startDate, endDate);
                         }
                     }
 
-                    String text = "PCR testy\n";
+                    String text;
                     int index = 1;
+                    String[] textArray = new String[testy.size()];
                     for (PCRTestDate test : testy) {
+                        text = "";
                         Okres okres = app.getOkres(test.getData().getKodOkresu());
                         Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
                         text += "----------------------------------";
-                        text += String.format("\nTest %d\n", index++);
+                        text += String.format("\nTest %d\n", index);
                         text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
                         text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
                         text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
@@ -750,9 +766,15 @@ public class GraphicalApp {
                         } else {
                             text += "Dalsie udaje neexistuju\n";
                         }
+                        textArray[index-1] = text;
+                        index++;
+                        //System.out.println(text.length());
                     }
 
-                    jTextArea.setText(text);
+                    jTextArea.setText("PCR testy\nPocet: " + testy.size() + "\n");
+                    for (String str : textArray) {
+                        jTextArea.append(str);
+                    }
                     jTextArea.setCaretPosition(0);
 
                     jPanel.add(jScrollPane);
@@ -847,7 +869,7 @@ public class GraphicalApp {
                 if (rodCislo != null) {
                     Osoba osoba = app.getOsoba(rodCislo);
                     if (osoba != null) {
-                        ArrayList<PCRTestDate> testy = app.getDateIntervalTest(osoba.getTesty(), new Date(0, 0, 0), new Date(10000, 11, 31));
+                        ArrayList<PCRTestDate> testy = osoba.getTesty().getInOrderData();
                         String text = String.format("Rodne cislo: %s\n", osoba.getRodCislo());
                         text += String.format("Meno: %s\n", osoba.getMeno());
                         text += String.format("Priezvisko: %s\n", osoba.getPriezvisko());

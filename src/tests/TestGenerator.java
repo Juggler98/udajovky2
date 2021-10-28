@@ -120,7 +120,7 @@ public class TestGenerator {
             testTree.preorder((TTTreeNode<Integer, TestClass>) testTree.getRoot());
 
             System.out.println("-----------INORDER------------");
-            testTree.inOrder((TTTreeNode<Integer, TestClass>) testTree.getRoot());
+            testTree.inOrderRecursive((TTTreeNode<Integer, TestClass>) testTree.getRoot());
 
             System.out.println("---------LEAF-DEEP----------");
             testTree.deepOfLeaf((TTTreeNode<Integer, TestClass>) testTree.getRoot());

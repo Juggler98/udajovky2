@@ -33,6 +33,7 @@ public class Application {
     Random random = new Random();
 
     public Application() {
+        //random.setSeed(60); //TODO: remove it
         if (okresCodes.length != okresNames.length) {
             System.out.println("Error: okresCodes.length != okresNames.length");
         }
@@ -124,23 +125,33 @@ public class Application {
         return kraje[kodKraja - 1];
     }
 
+//    public ArrayList<Osoba> getIntervalOsoba(String startRodCislo, String endRodCislo) {
+//        personTree.clearData();
+//        personTree.setInterval((TTTreeNode<String, Osoba>) personTree.getRoot(), startRodCislo, endRodCislo);
+//        return personTree.getData();
+//    }
+
+    public ArrayList<Osoba> getVsetkyOsoba() {
+        System.out.println(personTree.getSize());
+        return personTree.getInOrderData();
+    }
+
     public ArrayList<Osoba> getIntervalOsoba(String startRodCislo, String endRodCislo) {
-        personTree.clearData();
-        personTree.setInterval((TTTreeNode<String, Osoba>) personTree.getRoot(), startRodCislo, endRodCislo);
-        return personTree.getData();
+        System.out.println(personTree.getSize());
+        return personTree.getIntervalData(startRodCislo, endRodCislo);
     }
 
-    public ArrayList<PCRTestDate> getDateIntervalTest(TTTree<Date, PCRTestDate> tree, Date startDate, Date endDate) {
-        tree.clearData();
-        tree.setInterval((TTTreeNode<Date, PCRTestDate>) tree.getRoot(), startDate, endDate);
-        return tree.getData();
-    }
+//    public ArrayList<PCRTestDate> getDateIntervalTest(TTTree<Date, PCRTestDate> tree, Date startDate, Date endDate) {
+//        tree.clearData();
+//        tree.setInterval((TTTreeNode<Date, PCRTestDate>) tree.getRoot(), startDate, endDate);
+//        return tree.getData();
+//    }
 
-    public ArrayList<UzemnaJednotka> getUzemneJednotkySorted(TTTree<Integer, UzemnaJednotka> tree) {
-        tree.clearData();
-        tree.setInterval((TTTreeNode<Integer, UzemnaJednotka>) tree.getRoot(), Integer.MIN_VALUE, Integer.MAX_VALUE);
-        return tree.getData();
-    }
+//    public ArrayList<UzemnaJednotka> getUzemneJednotkySorted(TTTree<Integer, UzemnaJednotka> tree) {
+//        tree.clearData();
+//        tree.setInterval((TTTreeNode<Integer, UzemnaJednotka>) tree.getRoot(), Integer.MIN_VALUE, Integer.MAX_VALUE);
+//        return tree.getData();
+//    }
 
     public void writeToFile(String fileName) {
         String str = "Hello";
@@ -197,7 +208,7 @@ public class Application {
     public Osoba removeOsoba(String rodCislo) {
         Osoba osoba = personTree.remove(rodCislo);
         if (osoba != null) {
-            ArrayList<PCRTestDate> testy = this.getDateIntervalTest(osoba.getTesty(), new Date(0, 0, 0), new Date(10000, 11, 31));
+            ArrayList<PCRTestDate> testy = osoba.getTesty().getInOrderData();
             for (int i = 0; i < testy.size(); i++) {
                 PCRTestDate test = testy.get(i);
                 if (this.removePCRTest(test.getData().getKodTestu(), false) == null) {
