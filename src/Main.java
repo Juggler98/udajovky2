@@ -10,18 +10,6 @@ import java.util.Date;
 public class Main {
 
     public static void main(String[] args) {
-        //Application app = new Application();
-        //app.addRandomPersons(50);
-        //app.printPersonTree();
-
-        //app.addRandomPCRTest(50);
-        //app.printPcrTree();
-
-        //app.printOkresTree();
-
-        //Okres okres = app.getOkres(205);
-        //System.out.println(okres.getNazov());
-        //System.out.println(app.getKrajName(okres.getKodKraja()));
 
         new GraphicalApp();
 

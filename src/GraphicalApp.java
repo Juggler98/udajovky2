@@ -20,7 +20,6 @@ public class GraphicalApp {
     private final int componentHeight = 40;
     private final int componentWidth = 170;
     private final int componentDistance = 12;
-    private final int componentSecondLine = 370;
     private final int posun = 10;
 
     private boolean novyTest = false;
@@ -58,8 +57,8 @@ public class GraphicalApp {
 
         jFrame.add(jPanel);
 
-       // app.addRandomPersons(100);
-       // app.addRandomPCRTest(100);
+        //app.addRandomPersons(100);
+        //app.addRandomPCRTest(100);
 
         addVytvorPCRTestComponents();
         addVyhladajPCRTest();
@@ -72,19 +71,23 @@ public class GraphicalApp {
         addVymazTest();
         addSaveButton();
         addLoadButton();
+        addRemoveAllData();
+        addGeneruj();
 
-        test();
+        //test();
 
+    }
+
+    //only for testing
+    private void test() {
 //        ArrayList<Osoba> interval = app.getIntervalOsoba("550000123456", "6000001234");
 //        for (Osoba o : interval) {
 //            System.out.println(o.getKey());
 //        }
-        //app.printPersonTree();
+//        app.printPersonTree();
 //        System.out.println("size " + app.getPersonCount());
 //        System.out.println("size " + interval.size());
-    }
 
-    private void test() {
 //        ArrayList<PCRTestDate> arrayList = app.getDateIntervalTest(app.getOkres(205).getPozitivneTesty(), new Date(98, 10, 5), new Date(122, 10, 5));
 //
 //        for (int i = 0; i < arrayList.size(); i++) {
@@ -143,6 +146,54 @@ public class GraphicalApp {
         return null;
     }
 
+    private void addGeneruj() {
+        JButton jButton = new JButton("Generuj");
+        jPanel.add(jButton);
+        jButton.setBounds(posun + 120, jFrameHeight - posun - 30 - 46, 120, 30);
+
+        JTextField pocetLudiText = new JTextField();
+        JTextField pocetTestovText = new JTextField();
+
+        pocetLudiText.setToolTipText("Pocet ludi");
+        pocetTestovText.setToolTipText("Pocet testov");
+
+        pocetLudiText.setText("100");
+        pocetTestovText.setText("100");
+
+        jPanel.add(pocetLudiText);
+        jPanel.add(pocetTestovText);
+
+        pocetLudiText.setBounds(posun + 120, jFrameHeight - posun - 30 * 3 - 46, 120, 30);
+        pocetTestovText.setBounds(posun + 120, jFrameHeight - posun - 30 * 2 - 46, 120, 30);
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int pocetLudi = Integer.parseInt(pocetLudiText.getText());
+                int pocetTestov = Integer.parseInt(pocetTestovText.getText());
+                app.addRandomPersons(pocetLudi);
+                app.addRandomPCRTest(pocetTestov);
+            }
+        });
+
+    }
+
+    private void addRemoveAllData() {
+        JButton jButton = new JButton("Vymaz vsetko");
+        jPanel.add(jButton);
+        jButton.setBounds(posun, jFrameHeight - posun - 30 - 46, 120, 30);
+
+        jButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (JOptionPane.showConfirmDialog(null, "Naozaj chces vymazat vsetky data?") == 0) {
+                    app.removeAllData();
+                    JOptionPane.showMessageDialog(null, "Data boli vymazane");
+                }
+            }
+        });
+    }
+
     private void addSaveButton() {
         JButton jButton = new JButton("Save");
         jPanel.add(jButton);
@@ -193,7 +244,10 @@ public class GraphicalApp {
                         Okres okres = app.getOkres(test.getKodOkresu());
                         Pracovisko pracovisko = app.getPracovisko(test.getKodPracoviska());
                         String text = String.format("Kod testu: %s\n", test.getKodTestu());
-                        text += String.format("Datum testu: %s\n", test.getDatum().getDate() + "." + (test.getDatum().getMonth() + 1) + "." + (1900 + test.getDatum().getYear()));
+                        Date date = test.getDatum();
+                        String hours = date.getHours() < 10 ? "0" + date.getHours() : "" + date.getHours();
+                        String minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+                        text += String.format("Datum testu: %s\n", date.getDate() + "." + (date.getMonth() + 1) + "." + (1900 + date.getYear()) + " " + hours + ":" + minutes);
                         text += String.format("Kod pracoviska: %s\n", test.getKodPracoviska());
                         text += String.format("Kod okresu: %s\n", test.getKodOkresu());
                         text += String.format("Kod kraja: %s\n", test.getKodKraja());
@@ -220,8 +274,8 @@ public class GraphicalApp {
                         }
                         //text = "Test vymazany\n" + text;
                         //jTextArea.setText(text);
-//                        jTextArea.setCaretPosition(0);
-//                        jPanel.add(jScrollPane);
+                        //jTextArea.setCaretPosition(0);
+                        //jPanel.add(jScrollPane);
                         JOptionPane.showMessageDialog(null, text, "Test vymazany", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         String text = String.format("Test s kodom \"%s\" sa nepodarilo vymazat.\nSkontrolujte ci test existuje.", kodTestu);
@@ -564,7 +618,10 @@ public class GraphicalApp {
                                 text += "Dalsie udaje neexistuju\n";
                             }
                             text += String.format("\nKod testu: %s\n", test.getData().getKodTestu());
-                            text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
+                            Date date = test.getData().getDatum();
+                            String hours = date.getHours() < 10 ? "0" + date.getHours() : "" + date.getHours();
+                            String minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+                            text += String.format("Datum testu: %s\n", date.getDate() + "." + (date.getMonth() + 1) + "." + (1900 + date.getYear()) + " " + hours + ":" + minutes);
                             text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
                             text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
                             text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
@@ -579,7 +636,7 @@ public class GraphicalApp {
                             if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
                                 text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
                             }
-                            textArray[index-1] = text;
+                            textArray[index - 1] = text;
                             index++;
                         }
 
@@ -741,7 +798,10 @@ public class GraphicalApp {
                         text += "----------------------------------";
                         text += String.format("\nTest %d\n", index);
                         text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
-                        text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
+                        Date date = test.getData().getDatum();
+                        String hours = date.getHours() < 10 ? "0" + date.getHours() : "" + date.getHours();
+                        String minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+                        text += String.format("Datum testu: %s\n", date.getDate() + "." + (date.getMonth() + 1) + "." + (1900 + date.getYear()) + " " + hours + ":" + minutes);
                         text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
                         text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
                         text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
@@ -766,7 +826,7 @@ public class GraphicalApp {
                         } else {
                             text += "Dalsie udaje neexistuju\n";
                         }
-                        textArray[index-1] = text;
+                        textArray[index - 1] = text;
                         index++;
                         //System.out.println(text.length());
                     }
@@ -877,14 +937,21 @@ public class GraphicalApp {
                         int index = 1;
                         if (testy.size() == 0) {
                             text += "\nZiadne testy";
+                        } else {
+                            text += "\nPocet testov: " + testy.size() + "\n";
                         }
+                        String[] textArray = new String[testy.size()];
+                        textArray[0] = text;
                         for (PCRTestDate test : testy) {
                             Okres okres = app.getOkres(test.getData().getKodOkresu());
                             Pracovisko pracovisko = app.getPracovisko(test.getData().getKodPracoviska());
                             text += "----------------------------------";
-                            text += String.format("\nTest %d\n", index++);
+                            text += String.format("\nTest %d\n", index);
                             text += String.format("Kod testu: %s\n", test.getData().getKodTestu());
-                            text += String.format("Datum testu: %s\n", test.getData().getDatum().getDate() + "." + (test.getData().getDatum().getMonth() + 1) + "." + (1900 + test.getData().getDatum().getYear()));
+                            Date date = test.getData().getDatum();
+                            String hours = date.getHours() < 10 ? "0" + date.getHours() : "" + date.getHours();
+                            String minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+                            text += String.format("Datum testu: %s\n", date.getDate() + "." + (date.getMonth() + 1) + "." + (1900 + date.getYear()) + " " + hours + ":" + minutes);
                             text += String.format("Kod pracoviska: %s\n", test.getData().getKodPracoviska());
                             text += String.format("Kod okresu: %s\n", test.getData().getKodOkresu());
                             text += String.format("Kod kraja: %s\n", test.getData().getKodKraja());
@@ -899,8 +966,14 @@ public class GraphicalApp {
                             if (test.getData().getPoznamka() != null && !test.getData().getPoznamka().equals("")) {
                                 text += String.format("Poznamka: %s\n", test.getData().getPoznamka());
                             }
+                            textArray[index - 1] = text;
+                            index++;
+                            text = "";
                         }
-                        jTextArea.setText(text);
+                        jTextArea.setText("");
+                        for (String str : textArray) {
+                            jTextArea.append(str);
+                        }
                         jTextArea.setCaretPosition(0);
                         jPanel.add(jScrollPane);
                         //JOptionPane.showMessageDialog(null, text, "PCR Testy", JOptionPane.INFORMATION_MESSAGE);
@@ -928,7 +1001,10 @@ public class GraphicalApp {
                         Okres okres = app.getOkres(test.getKodOkresu());
                         Pracovisko pracovisko = app.getPracovisko(test.getKodPracoviska());
                         String text = String.format("Kod testu: %s\n", test.getKodTestu());
-                        text += String.format("Datum testu: %s\n", test.getDatum().getDate() + "." + (test.getDatum().getMonth() + 1) + "." + (1900 + test.getDatum().getYear()));
+                        Date date = test.getDatum();
+                        String hours = date.getHours() < 10 ? "0" + date.getHours() : "" + date.getHours();
+                        String minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+                        text += String.format("Datum testu: %s\n", date.getDate() + "." + (date.getMonth() + 1) + "." + (1900 + date.getYear()) + " " + hours + ":" + minutes);
                         text += String.format("Kod pracoviska: %s\n", test.getKodPracoviska());
                         text += String.format("Kod okresu: %s\n", test.getKodOkresu());
                         text += String.format("Kod kraja: %s\n", test.getKodKraja());

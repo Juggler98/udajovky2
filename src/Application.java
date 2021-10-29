@@ -70,11 +70,6 @@ public class Application {
         okresTree.preorder((TTTreeNode<Integer, UzemnaJednotka>) okresTree.getRoot());
     }
 
-//    public String getOkresName(int kodOkresu) {
-//        return okresTree.search(kodOkresu).getNazov();
-//    }
-
-
     public Integer[] getOkresCodes() {
         return okresCodes;
     }
@@ -209,16 +204,8 @@ public class Application {
                 String[] data = line.split(",");
                 if (readingPersons) {
                     addOsoba(data[1], data[2], data[0]);
-                    for (String d : data) {
-                        //System.out.println(d);
-                    }
                 } else {
-                    //String kodTestu, String rodCisloPacienta, int kodPracoviska, int kodOkresu, int kodKraja, boolean vysledok, String poznamka, Osoba osoba, Date datum
-                    for (String d : data) {
-                        //System.out.println(d);
-                    }
                     Date date = formatter.parse(data[7]);
-                    //System.out.println(date);
                     Osoba osoba = this.getOsoba(data[1]);
                     addPCRTest(data[0], data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]), Boolean.parseBoolean(data[5]), data[6], osoba, date);
                 }
@@ -267,6 +254,14 @@ public class Application {
         return true;
     }
 
+    public void removeAllData() {
+        ArrayList<Osoba> osoby = this.personTree.getInOrderData();
+        for (Osoba osoba : osoby) {
+            this.removeOsoba(osoba.getRodCislo());
+        }
+        this.randomOsoby.clear();
+    }
+
     public Osoba removeOsoba(String rodCislo) {
         Osoba osoba = personTree.remove(rodCislo);
         if (osoba != null) {
@@ -277,6 +272,7 @@ public class Application {
                     return null;
                 }
             }
+            //randomOsoby.remove(osoba);
             return osoba;
         }
         return null;
@@ -318,6 +314,7 @@ public class Application {
     }
 
     public void addRandomPCRTest(int count) {
+        Date actualDate = new Date(System.currentTimeMillis());
         for (int i = 0; i < count; i++) {
             String rodCislo = this.getRandomRodCislo();
             int kodPracoviska = pracoviskaCodes[random.nextInt(pracoviskaCodes.length)];
@@ -330,8 +327,27 @@ public class Application {
             }
             String kodTestu = "" + random.nextInt(10000);
             kodTestu = null;
+
+            int year = random.nextInt(actualDate.getYear() - 121 + 1) + 121;
+            int month = random.nextInt(12) + 1;
+            int day = random.nextInt(31) + 1;
+            if (month == 2 && day > 28) {
+                day = 28;
+            } else if (day == 31) {
+                switch (month) {
+                    case 4:
+                    case 6:
+                    case 9:
+                    case 11:
+                        day = 30;
+                }
+            }
+            int hour = random.nextInt(24);
+            int minutes = random.nextInt(60);
+            Date date = new Date(year, month - 1, day, hour, minutes);
+            //date = null;
             if (osoba != null)
-                this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba, null);
+                this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba, date);
         }
     }
 

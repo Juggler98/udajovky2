@@ -16,17 +16,17 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 
     }
 
+    /*
+    Implementovane podla slovneho popisu z prednaskoveho dokumentu.
+     */
     @Override
     public boolean add(T newData) {
-        //TTTreeNode<K, T> newItem = new TTTreeNode<>(data);
         if (!tryToAdd(newData)) {
             System.out.println("Nepodarilo sa vlozit kluc: " + newData.getKey()); //TODO: Remove it
             return false;
         }
         ++this.size;
         return true;
-        //++height;
-
     }
 
     private boolean tryToAdd(T newData) {
@@ -145,6 +145,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         }
     }
 
+    /*
+    Intervale vyhladavanie.
+    Implementovane podla vlastneho navrhu.
+     */
     public ArrayList<T> getIntervalData(K start, K end) {
         TTTreeNode<K, T> leaf = (TTTreeNode<K, T>) this.root;
         if (leaf == null) {
@@ -291,6 +295,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         return data;
     }
 
+    /*
+    Inorder bez rekurzie.
+    Implementovane podla vlastneho navrhu.
+     */
     public ArrayList<T> getInOrderData() {
         TTTreeNode<K, T> current = (TTTreeNode<K, T>) this.root;
         ArrayList<T> data = new ArrayList<>();
@@ -398,6 +406,10 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         preorder(node.getRightSon());
     }
 
+    /*
+    Len pre testove ucely. Vypis hlbky kazdeho listu pomocou rekurzie.
+    Implementacia inspirovana podla toho, co som pocul na cviceni.
+     */
     public void deepOfLeaf(TTTreeNode<K, T> node) {
         if (node == null) {
             //System.out.println("null");
@@ -475,51 +487,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         return null;
     }
 
-//    private TTTreeNode<K, T> findParent(K key) {
-//        TTTreeNode<K, T> result = this.root;
-//        if (result == null) {
-//            return null;
-//        }
-//        TTTreeNode<K, T> parent = result;
-//        while (key != result.getKeyL() && result.getKeyR() != key) {
-//            parent = result;
-//            if (result.isThreeNode()) {
-//                if (key.compareTo(result.getKeyL()) == 0 || key.compareTo(result.getKeyR()) == 0) {
-//                    break;
-//                }
-//                if (key.compareTo(result.getKeyL()) < 0) {
-//                    if (result.hasLeftSon())
-//                        result = result.getLeftSon();
-//                    else
-//                        break;
-//                } else if (key.compareTo(result.getKeyR()) > 0) {
-//                    if (result.hasRightSon())
-//                        result = result.getRightSon();
-//                    else
-//                        break;
-//                } else {
-//                    if (result.hasMiddleSon())
-//                        result = result.getMiddleSon();
-//                    else
-//                        break;
-//                }
-//            } else {
-//                if (key.compareTo(result.getKeyL()) < 0) {
-//                    if (result.hasLeftSon())
-//                        result = result.getLeftSon();
-//                    else
-//                        break;
-//                } else {
-//                    if (result.hasRightSon())
-//                        result = result.getRightSon();
-//                    else
-//                        break;
-//                }
-//            }
-//        }
-//        return (key.compareTo(result.getKeyL()) == 0 || result.getKeyR().compareTo(key) == 0) && parent != result ? parent : null;
-//    }
-
+    /*
+    Implementovane podla slovneho popisu z prednaskoveho dokumentu.
+     */
     @Override
     public T search(K key) {
         TTTreeNode<K, T> result = searchNode(key);
@@ -638,7 +608,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 //        return null;
 //    }
 
-
+    /*
+        Implementovane podla slovneho popisu z prednaskoveho dokumentu.
+    */
     @Override
     public T remove(K key) {
         TTTreeNode<K, T> node = searchNode(key);
@@ -663,6 +635,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         return deletedData;
     }
 
+    /*
+    Metoda removeData maze prvok rovnako ako metoda remove, ale mazany prvok hlada pomocou dat T a nie len podla kluca K.
+     */
     public T removeData(T data) {
         TTTreeNode<K, T> node = searchNodeWithData(data);
         if (node == null) {
@@ -1077,23 +1052,6 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         }
         System.out.println("Error in findInOrderLeaf, this should not happened.");
         return null;
-    }
-
-
-    private boolean extractNode(TTTreeNode<K, T> node) {
-//        TTTreeNode<K, T> parent = node.getParent();
-//        if (parent == null) {
-//            this.root = null;
-//            --size;
-//            return true;
-//        }
-//        if (parent.getKey().compareTo(node.getKey()) < 0) {
-//            parent.setRightSon(node);
-//        } else {
-//            parent.setLeftSon(node);
-//            --size;
-//        }
-        return true;
     }
 
     public int getHeight() {
