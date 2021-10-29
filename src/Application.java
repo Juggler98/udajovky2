@@ -259,7 +259,6 @@ public class Application {
         for (Osoba osoba : osoby) {
             this.removeOsoba(osoba.getRodCislo());
         }
-        this.randomOsoby.clear();
     }
 
     public Osoba removeOsoba(String rodCislo) {
@@ -272,7 +271,6 @@ public class Application {
                     return null;
                 }
             }
-            //randomOsoby.remove(osoba);
             return osoba;
         }
         return null;
@@ -323,7 +321,12 @@ public class Application {
             boolean vysledok = random.nextInt(2) == 1;
             Osoba osoba = getOsoba(rodCislo);
             if (osoba == null) {
-                osoba = randomOsoby.get(random.nextInt(randomOsoby.size()));
+                if (randomOsoby.size() > 0) {
+                    osoba = randomOsoby.get(random.nextInt(randomOsoby.size()));
+                } else {
+                    System.out.println("Musi sa vygenerovat aspon 1 nahodna osoba.");
+                    return;
+                }
             }
             String kodTestu = "" + random.nextInt(10000);
             kodTestu = null;
@@ -349,6 +352,7 @@ public class Application {
             if (osoba != null)
                 this.addPCRTest(kodTestu, osoba.getRodCislo(), kodPracoviska, kodOkresu, kodKraju, vysledok, null, osoba, date);
         }
+        this.randomOsoby.clear();
     }
 
     public void addRandomPersons(int count) {

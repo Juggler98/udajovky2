@@ -388,6 +388,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 //        }
 //    }
 
+    /*
+    Len pre testove ucely.
+     */
     public void inOrderRecursive(TTTreeNode<K, T> node) {
         if (node == null)
             return;
@@ -397,6 +400,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
         inOrderRecursive(node.getRightSon());
     }
 
+    /*
+    Len pre testove ucely.
+     */
     public void preorder(TTTreeNode<K, T> node) {
         if (node == null)
             return;
