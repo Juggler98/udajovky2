@@ -9,8 +9,9 @@ public class TTTree<K extends Comparable<K>, T extends Comparable<T> & TreeKey<K
 
     //private TTTreeNode<K, T> root;
     //private int size = 0;
+    //private ArrayList<T> data = new ArrayList<>();
+
     private int height = 0;
-    private ArrayList<T> data = new ArrayList<>();
 
     public TTTree() {
 
