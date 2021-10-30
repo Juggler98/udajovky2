@@ -15,12 +15,12 @@ public class GraphicalApp {
     private final JScrollPane jScrollPane = new JScrollPane(jTextArea);
 
     private final Application app = new Application();
-    private final int jFrameWidth = 1600;
-    private final int jFrameHeight = 800;
+    private final int jFrameHeight = 780;
     private final int componentHeight = 40;
-    private final int componentWidth = 170;
+    private final int componentWidth = 150;
     private final int componentDistance = 12;
     private final int posun = 10;
+    private final int jFrameWidth = componentWidth * 9 + 2 * posun + 9 * 2;
 
     private boolean novyTest = false;
     private boolean hladajPozitivneOsoby = false;
@@ -173,6 +173,7 @@ public class GraphicalApp {
                 int pocetTestov = Integer.parseInt(pocetTestovText.getText());
                 app.addRandomPersons(pocetLudi);
                 app.addRandomPCRTest(pocetTestov);
+                JOptionPane.showMessageDialog(null, "Data boli vygenerovane");
             }
         });
 
@@ -204,7 +205,11 @@ public class GraphicalApp {
             public void actionPerformed(ActionEvent e) {
                 String nazovSuboru = JOptionPane.showInputDialog("Zadaj nazov suboru");
                 if (nazovSuboru != null) {
-                    app.writeToFile(nazovSuboru);
+                    if (app.writeToFile(nazovSuboru)) {
+                        JOptionPane.showMessageDialog(null, "Data boli ulozene do suboru: " + nazovSuboru + ".csv");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data sa nepodarilo ulozit do suboru: " + nazovSuboru + ".csv");
+                    }
                 }
             }
         });
@@ -221,7 +226,11 @@ public class GraphicalApp {
             public void actionPerformed(ActionEvent e) {
                 String nazovSuboru = JOptionPane.showInputDialog("Zadaj nazov suboru");
                 if (nazovSuboru != null) {
-                    app.loadFromFile(nazovSuboru);
+                    if (app.loadFromFile(nazovSuboru)) {
+                        JOptionPane.showMessageDialog(null, "Data boli nacitane zo suboru: " + nazovSuboru + ".csv");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data sa nepodarilo nacitat zo suboru: " + nazovSuboru + ".csv");
+                    }
                 }
             }
         });
@@ -917,7 +926,7 @@ public class GraphicalApp {
     }
 
     private void addVypisTestovPacienta() {
-        JButton jButton = new JButton("Zobraz testy pacienta");
+        JButton jButton = new JButton("Testy pacienta");
         jPanel.add(jButton);
 
         jButton.setBounds(posun + componentWidth * 3, posun, componentWidth, componentHeight);

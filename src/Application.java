@@ -148,7 +148,7 @@ public class Application {
 //        return tree.getData();
 //    }
 
-    public void writeToFile(String fileName) {
+    public boolean writeToFile(String fileName) {
         String text;
         ArrayList<PCRTestCode> testy = this.pcrTreeCode.getInOrderData();
         ArrayList<Osoba> osoby = this.personTree.getInOrderData();
@@ -182,13 +182,14 @@ public class Application {
                 writer.write(text);
             }
             writer.close();
+            return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            return false;
         }
-
     }
 
-    public void loadFromFile(String fileName) {
+    public boolean loadFromFile(String fileName) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName + ".csv"));
             String line = reader.readLine();
@@ -211,9 +212,11 @@ public class Application {
                 line = reader.readLine();
             }
             reader.close();
+            return true;
         } catch (Exception e) {
             System.out.println("Error: Reading");
             System.out.println(e.getMessage());
+            return false;
         }
     }
 
