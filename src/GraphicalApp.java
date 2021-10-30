@@ -949,7 +949,7 @@ public class GraphicalApp {
                         } else {
                             text += "\nPocet testov: " + testy.size() + "\n";
                         }
-                        String[] textArray = new String[testy.size()];
+                        String[] textArray = new String[testy.size() == 0 ? 1 : testy.size()];
                         textArray[0] = text;
                         for (PCRTestDate test : testy) {
                             Okres okres = app.getOkres(test.getData().getKodOkresu());
