@@ -4,9 +4,9 @@ import universalTree.TreeKey;
 
 public class TestClass implements Comparable<TestClass>, TreeKey<Integer> {
 
-    private int kluc;
+    private final Integer kluc;
 
-    TestClass(int kluc) {
+    TestClass(Integer kluc) {
         this.kluc = kluc;
     }
 
@@ -17,10 +17,6 @@ public class TestClass implements Comparable<TestClass>, TreeKey<Integer> {
 
     @Override
     public Integer getKey() {
-        return (Integer) this.kluc;
-    }
-
-    public int getKluc() {
         return this.kluc;
     }
 

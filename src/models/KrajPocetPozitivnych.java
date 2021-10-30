@@ -1,20 +1,20 @@
-package Models;
+package models;
 
-public class OkresPocetPozitivnych extends UzemnaJednotka {
+public class KrajPocetPozitivnych extends UzemnaJednotka {
 
     private Integer pocetPozitivnych;
 
-    public OkresPocetPozitivnych(int kod, String nazov) {
+    public KrajPocetPozitivnych(int kod, String nazov) {
         super(kod, nazov);
     }
 
     @Override
     public int compareTo(UzemnaJednotka u) {
-        OkresPocetPozitivnych okresPocetPozitivnych = (OkresPocetPozitivnych) u;
-        if (pocetPozitivnych.compareTo(okresPocetPozitivnych.pocetPozitivnych) == 0) {
+        KrajPocetPozitivnych krajPocetPozitivnych = (KrajPocetPozitivnych) u;
+        if (pocetPozitivnych.compareTo(krajPocetPozitivnych.pocetPozitivnych) == 0) {
             return this.getKod().compareTo(u.getKod());
         }
-        return pocetPozitivnych.compareTo(okresPocetPozitivnych.pocetPozitivnych);
+        return pocetPozitivnych.compareTo(krajPocetPozitivnych.pocetPozitivnych);
     }
 
     public Integer getPocetPozitivnych() {

@@ -1,4 +1,4 @@
-import Models.*;
+import models.*;
 import twoThreeTree.TTTree;
 
 import javax.swing.*;

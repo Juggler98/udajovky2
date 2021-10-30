@@ -1,8 +1,4 @@
-package Models;
-
-import twoThreeTree.TTTree;
-
-import java.util.Date;
+package models;
 
 public class Pracovisko extends UzemnaJednotka {
 

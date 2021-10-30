@@ -1,4 +1,4 @@
-package Models;
+package models;
 
 import twoThreeTree.TTTree;
 import universalTree.TreeKey;

@@ -59,18 +59,18 @@ public class TestGenerator {
                     TestClass testClass = new TestClass((Integer) random.nextInt(randomNumberBound));
                     int randomOperation = random1.nextInt(100);
                     if (randomOperation < addPercentage) {
-                        System.out.println("ADD: " + testClass.getKluc());
+                        System.out.println("ADD: " + testClass.getKey());
                         addCount++;
                         boolean treeNotAdd = testTree.add(testClass);
                         if (!treeNotAdd) {
                             addNotPossible++;
                         }
-                        boolean arrayListNotAdd = !testArrayList.contains(testClass.getKluc());
+                        boolean arrayListNotAdd = !testArrayList.contains(testClass.getKey());
                         if (arrayListNotAdd) {
-                            testArrayList.add(testClass.getKluc());
+                            testArrayList.add(testClass.getKey());
                         }
                         if (treeNotAdd && !arrayListNotAdd) {
-                            System.out.println(testClass.getKluc());
+                            System.out.println(testClass.getKey());
                             System.out.println("-------Test-Problem------");
                         }
                     } else {

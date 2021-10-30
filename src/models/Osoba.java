@@ -1,9 +1,8 @@
-package Models;
+package models;
 
 import twoThreeTree.TTTree;
 import universalTree.TreeKey;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.lang.Comparable;
 

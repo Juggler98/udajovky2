@@ -1,4 +1,4 @@
-import Models.*;
+import models.*;
 import twoThreeTree.TTTree;
 import twoThreeTree.TTTreeNode;
 
@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -304,7 +303,7 @@ public class Application {
         int month = Integer.parseInt(rodCislo.substring(2, 4));
         int day = Integer.parseInt(rodCislo.substring(4, 6));
         Date date = new Date(year < actualDate.getYear() - 100 ? year + 100 : year, month - 1, day);
-        Osoba osoba = new Models.Osoba(meno, priezvisko, date, rodCislo);
+        Osoba osoba = new models.Osoba(meno, priezvisko, date, rodCislo);
         if (personTree.add(osoba)) {
             return osoba;
         }
